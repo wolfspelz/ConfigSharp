@@ -1,5 +1,3 @@
-REM Console:
-cd C:\Heiner\github-ConfigSharp\ConfigSharp
+cd $(SolutionDir)\ConfigSharp
 ..\.nuget\nuget pack ConfigSharp.csproj
 ..\.nuget\nuget push ConfigSharp.1.0.2.0.nupkg
-
