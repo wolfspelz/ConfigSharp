@@ -12,6 +12,8 @@ Program.cs:
     public class MyConfig : ConfigSharp.Container
     {
         public string SomeProperty { get; set; }
+        public int OrAsMemberVariable = 41;
+        public DateTime RealCLRTypes;
     }
     
     static void Main(string[] args)
@@ -26,9 +28,9 @@ ConfigFile.cs:
 
     namespace MyProgram.Configuration
     {
-        class Production
+        class Production // Any class name
         {
-            public static void Run(MyProgram.MyConfig config)
+            public static void Run(MyProgram.MyConfig config) // Any method name
             {
                 config.SomeProperty = "42";
                 config.Include("OtherConfigFile.cs");
@@ -36,7 +38,7 @@ ConfigFile.cs:
         }
     }
 
-Integrated support for a global config object like:
+Integrated support for a global config object:
 
     ConfigSharp.Global.Instance = new MyConfig().Include("ConfigFile.cs");
     Console.WriteLine("Config.Global.SomeProperty = " + Config.Global.SomeProperty);
