@@ -1,5 +1,5 @@
 REM Console:
-cd C:\Heiner\ConfigSharp\ConfigSharp
-..\.nuget\nuget pack ConfigSharp.csproj -Prop Configuration=Release
-..\.nuget\nuget push ConfigSharp.1.0.1.0.nupkg
+cd C:\Heiner\github-ConfigSharp\ConfigSharp
+..\.nuget\nuget pack ConfigSharp.csproj
+..\.nuget\nuget push ConfigSharp.1.0.2.0.nupkg
 
