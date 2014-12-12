@@ -28,7 +28,7 @@ ConfigFile.cs:
 
     namespace MyProgram.Configuration
     {
-        class Production // Any class name
+        class ConfigFile // Any class name, but preferably same as file name
         {
             public static void Run(MyProgram.MyConfig config) // Any method name
             {
