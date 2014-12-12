@@ -32,8 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ConfigSharp">
-      <HintPath>..\packages\ConfigSharp.1.0.1.0\lib\net45\ConfigSharp.dll</HintPath>
+    <Reference Include="ConfigSharp, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ConfigSharp.1.0.2.0\lib\net45\ConfigSharp.dll</HintPath>
     </Reference>
     <Reference Include="Roslyn.Compilers">
       <HintPath>..\packages\Roslyn.Compilers.Common.1.2.20906.2\lib\net45\Roslyn.Compilers.dll</HintPath>
