@@ -25,18 +25,18 @@ namespace ConfigSharpTester
             ConfigSharp.Global.Instance = new MyConfig().Include("../../Configuration/Root.cs");
 
             Console.WriteLine("");
-            Console.WriteLine("SetupName                          = " + Config.Global.SetupName);
-            Console.WriteLine("StringMemberFromRootCs             = " + Config.Global.StringMemberFromRootCs);
-            Console.WriteLine("IntPropertyFromRootCs              = " + Config.Global.IntPropertyFromRootCs);
-            Console.WriteLine("IntFromDebugCs                     = " + Config.Global.IntFromDebugCs);
-            Console.WriteLine("IntFromProductionCs                = " + Config.Global.IntFromProductionCs);
-            Console.WriteLine("DateTimeProperty                   = " + Config.Global.DateTimeProperty);
-            Console.WriteLine("PropertyFromHttpInclude            = " + Config.Global.PropertyFromHttpInclude);
-            Console.WriteLine("Get(StringMemberFromRootCs)        = " + Config.Global.Get("StringMemberFromRootCs", "-default-"));
-            Console.WriteLine("Get(IntPropertyFromRootCs)         = " + Config.Global.Get("IntPropertyFromRootCs", 41));
-            Console.WriteLine("Get(DateTimeProperty.Date.Year)    = " + Config.Global.Get("DateTimeProperty.Date.Year", -1));
-            Console.WriteLine("Get<T>(DateTimeProperty).Date.Year = " + Config.Global.Get<DateTime>("DateTimeProperty").Date.Year);
-            Console.WriteLine("Get(NotExistingProperty)           = " + Config.Global.Get("NotExistingProperty", "-default-"));
+            Console.WriteLine("SetupName                  [Production] = " + Config.Global.SetupName);
+            Console.WriteLine("StringMemberFromRootCs       [Local...] = " + Config.Global.StringMemberFromRootCs);
+            Console.WriteLine("IntPropertyFromRootCs              [42] = " + Config.Global.IntPropertyFromRootCs);
+            Console.WriteLine("IntFromDebugCs                     [-1] = " + Config.Global.IntFromDebugCs);
+            Console.WriteLine("IntFromProductionCs                [44] = " + Config.Global.IntFromProductionCs);
+            Console.WriteLine("DateTimeProperty                        = " + Config.Global.DateTimeProperty);
+            Console.WriteLine("PropertyFromHttpInclude     [Remote...] = " + Config.Global.PropertyFromHttpInclude);
+            Console.WriteLine("Get(StringMemberFromRootCs)  [Local...] = " + Config.Global.Get("StringMemberFromRootCs", "-default-"));
+            Console.WriteLine("Get(IntPropertyFromRootCs)         [42] = " + Config.Global.Get("IntPropertyFromRootCs", 41));
+            Console.WriteLine("Get(DateTimeProperty.Date.Year]         = " + Config.Global.Get("DateTimeProperty.Date.Year", -1));
+            Console.WriteLine("Get<T>(DateTimeProperty).Date.Year      = " + Config.Global.Get<DateTime>("DateTimeProperty").Date.Year);
+            Console.WriteLine("Get(NotExistingProperty)    [-default-] = " + Config.Global.Get("NotExistingProperty", "-default-"));
 
             Console.WriteLine("");
             Console.WriteLine("<ENTER> to continue");

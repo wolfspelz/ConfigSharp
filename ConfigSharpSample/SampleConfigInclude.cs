@@ -4,7 +4,7 @@
     {
         public static void Run(ConfigSharpSample.MyConfigObject config)
         {
-            config.TestProperty += "Added by SampleConfigInclude. ";
+            config.TestProperty = "By SampleConfigInclude";
         }
     }
 }
