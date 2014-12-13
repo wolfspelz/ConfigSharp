@@ -82,13 +82,26 @@ Without this wrapper you'd use:
 
 #### 3.3 Getter functions with string based property name and default value
 
+    var serverAddress = Config.Global.Get("ServerAddress", "http://localhost:8080/");
+    var maxSize = Config.Global.Get("MaxMessageSize", 100 * 1024 * 1024);
+    var formatJson = Config.Global.Get("FormatResponseJson", true);
+    // Complex properties with type:
+    var endDate = Config.Global.Get<DateTime>("ServiceEndDate");
+
+You could also omit the "Global." and do
+
     var serverAddress = Config.Get("ServerAddress", "http://localhost:8080/");
-    var maxSize = Config.Get("MaxMessageSize", 100 * 1024 * 1024);
-    var formatJson = Config.Get("FormatResponseJson", true);
 
-Accessing complex properties with type:
+If you augment the your wrapper like:
 
-    var endDate = Config.Get<DateTime>("ServiceEndDate");
+    public class App : ConfigSharp.Global
+    {
+        public static MyConfig Settings { get { return (MyConfig)ConfigSharp.Global.Instance; } }
+        public static string Get(string key, string defaultValue)
+        {
+            return ConfigSharp.Global.Instance.Get(key, defaultValue);
+        }
+    }
 
 ### 4. What you can change when using ConfigSharp
 
