@@ -1,25 +1,22 @@
 ConfigSharp
 ===========
 
-Configure your .NET application with C# config files. Config files are C# source files, managed by the Visual Studio like any other code file, intellisensed, syntax checked, compiled, type safe. 
+Configure your .NET application with C# config files. Config files are C# source files, managed by the Visual Studio like any other code file, intellisensed, resharpered, syntax checked, compiled, type safe. 
 
-Write real code with control structures and classes in config files. Include other local or remote (HTTP) config files.
+Write real code with control structures and classes in config files. Include other local or remote (HTTP) config files. 
 
-No more key-value lists of string based app settings from XML. These settings are typed properties of CLR objects.
+No more key-value lists of string based app settings from XML. These settings are typed properties of CLR objects. 
+
+Config files are not C# script (.csx) files. They are C#, because they are code and code wants to be intellisensed, resharpered, syntax checked, compiled, type safe. 
+
+### What it does
+
+You have a config class which contains your app settings. An instance is populated by loading/executing C# based config files. You can then use memebrs/properties of the config object anywhere in your app. 
 
 ### Examples
 
 Program.cs:
 
-    public class MyConfig : ConfigSharp.Container
-    {
-        public string SomeProperty { get; set; }
-        public int OrAsMemberVariable = 41;
-        public DateTime OrRealCLRTypes;
-        public string DatabasePassword { get; set; }
-        public string SetupName { get; set; }
-    }
-    
     static void Main(string[] args)
     {
       var config = new MyConfig();
@@ -28,6 +25,15 @@ Program.cs:
       ...
     }
 
+    public class MyConfig : ConfigSharp.Container
+    {
+        public string SomeProperty { get; set; }
+        public int OrAsMemberVariable = 41;
+        public DateTime OrPlainOldCLRTypes;
+        public string DatabasePassword { get; set; }
+        public string SetupName { get; set; }
+    }
+    
 ConfigFile.cs:
 
     namespace MyProgram.Configuration
@@ -71,7 +77,7 @@ Root.cs:
         {
           config.SomeProperty = "http://localhost:8080/";
           config.OrAsMemberVariable = 42;
-          config.OrRealCLRTypes = DateTime.Now;
+          config.OrPlainOldCLRTypes = DateTime.Now;
           config.DatabasePassword = "-empty-";
           
           config.Include("Setup.cs");
@@ -112,4 +118,4 @@ Production.cs:
       }
     }
 
-
+But it is just a BCP (best current practice). It is not hard coded in the library. You can roll your own plicy. It's plain C#. 
