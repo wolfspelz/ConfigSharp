@@ -37,7 +37,7 @@ Program.cs:
     
 ConfigFile.cs:
 
-    namespace MyProgram.Configuration
+    namespace MyProgram.Configuration // any namespace, preferably the one given by the project structure
     {
         class ConfigFile // Any class name, but preferably same as file name
         {
@@ -48,6 +48,8 @@ ConfigFile.cs:
             }
         }
     }
+
+ConfigSharp will execute any/all (public) methods of any/all (public) classes of any namespace in a config file. 
 
 ### Ubiquitous access to config settings
 
@@ -119,4 +121,40 @@ Production.cs:
       }
     }
 
-But it is just a BCP (best current practice). It is not hard coded in the library. You can roll your own plicy. It's plain C#. 
+But it is just a BCP (best current practice). It is not hard coded in the library. You can roll your own policy. It's plain C#. 
+
+### Accessing config properties
+
+App settings / config properties / members of the config object can be accessed in different ways.
+
+#### Properties of a config object instance
+
+xx
+
+#### Properties of a global config object
+
+yy
+
+#### Getter functions with string based property name and default value
+
+zz
+
+### What is built in an what is not
+
+Not built in and for you to change:
+- namespace in config files
+- class names in config files
+- method names in config files
+- config object class name, e.g. MyConfig
+- property names (of course)
+- C# properties or memeber variables with initialization
+- Global config accessor name, e.g. Config.Global.MyProperty or App.Settings.MyProperty
+- Configuration management policy, because it is implemented by your config files
+
+Built in:
+- Config class must be derived from ConfigSharp.Container
+
+
+
+
+
