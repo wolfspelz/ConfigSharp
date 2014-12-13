@@ -53,9 +53,9 @@ ConfigSharp will execute all public methods of all public classes of any namespa
 
 ### 3. Using config properties
 
-After loading the settings into the config object:
+After loading the settings into the config object...
 
-    ConfigSharp.Global.Instance = new MyConfig().Include("ConfigFile.cs");
+    new MyConfig().Include("ConfigFile.cs");
     
 ...you will use the properties. Your app settings / config properties / members of the config object can be accessed in different ways:
 
@@ -91,16 +91,15 @@ Without this wrapper you'd use:
 You could also omit the "Global." and do
 
     var serverAddress = Config.Get("ServerAddress", "http://localhost:8080/");
+    // or
+    var serverAddress = AppSettings.Get("ServerAddress", "http://localhost:8080/");
+    // Your choice
 
-If you augment the your wrapper like:
+If you augment the your wrapper with a getter:
 
-    public class App : ConfigSharp.Global
+    public static string Get(string key, string defaultValue)
     {
-        public static MyConfig Settings { get { return (MyConfig)ConfigSharp.Global.Instance; } }
-        public static string Get(string key, string defaultValue)
-        {
-            return ConfigSharp.Global.Instance.Get(key, defaultValue);
-        }
+        return ConfigSharp.Global.Instance.Get(key, defaultValue);
     }
 
 ### 4. What you can change when using ConfigSharp
