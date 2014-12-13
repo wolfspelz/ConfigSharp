@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigSharpTester", "Config
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigSharpSample", "ConfigSharpSample\ConfigSharpSample.csproj", "{FE589A3E-69BE-45EC-A9F5-4119E387CF4A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A97E5FC4-87F4-4C31-BB91-D1D44371C66F}"
+	ProjectSection(SolutionItems) = preProject
+		NuGetPackage.txt = NuGetPackage.txt
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

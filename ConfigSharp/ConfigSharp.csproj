@@ -48,6 +48,7 @@
     <Compile Include="Container.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="LibLogger.cs" />
+    <Compile Include="PropValueExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -10,44 +10,6 @@ using Roslyn.Compilers.CSharp;
 
 namespace ConfigSharp
 {
-    public static class ObjectGetPropValueExtension
-    {
-        public static Object GetMemberValue(this Object obj, String name)
-        {
-            if (obj == null) { return null; }
-
-            foreach (String part in name.Split('.')) {
-
-                Type type = obj.GetType();
-                PropertyInfo pi = type.GetProperty(part);
-                if (pi != null) {
-                    obj = pi.GetValue(obj, null);
-                } else {
-                    FieldInfo fi = type.GetField(part);
-                    if (fi != null) {
-                        obj = fi.GetValue(obj);
-                    } else {
-                        obj = null;
-                    }
-                }
-
-            }
-
-            return obj;
-        }
-
-        public static T GetMemberValue<T>(this Object obj, String name, T defaultValue)
-        {
-            Object value = GetMemberValue(obj, name);
-            if (value == null) {
-                return defaultValue;
-            }
-
-            // throws InvalidCastException if types are incompatible
-            return (T)value;
-        }
-    }
-
     public class Container
     {
         public int Get(string sKey, int defaultValue) { return this.GetMemberValue<int>(sKey, defaultValue); }
@@ -60,8 +22,6 @@ namespace ConfigSharp
 
         protected string BaseFolder { get; set; }
         public string CurrentFile { get; protected set; }
-
-        public string SetupName { get; set; }
 
         public void Load(string code)
         {

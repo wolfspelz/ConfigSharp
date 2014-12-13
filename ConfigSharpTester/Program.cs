@@ -4,6 +4,7 @@ namespace ConfigSharpTester
 {
     public class MyConfig : ConfigSharp.Container
     {
+        public string SetupName { get; set; }
         public string StringMemberFromRootCs = "-empty-";
         public int IntPropertyFromRootCs { get; set; }
         public int IntFromDebugCs = -1;
