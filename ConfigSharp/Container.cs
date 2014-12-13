@@ -12,12 +12,11 @@ namespace ConfigSharp
 {
     public class Container
     {
-        public int Get(string sKey, int defaultValue) { return this.GetMemberValue<int>(sKey, defaultValue); }
-        public string Get(string sKey, string defaultValue) { return this.GetMemberValue<string>(sKey, defaultValue); }
-        public long Get(string sKey, long defaultValue) { return this.GetMemberValue<long>(sKey, defaultValue); }
-        public double Get(string sKey, double defaultValue) { return this.GetMemberValue<double>(sKey, defaultValue); }
-        public bool Get(string sKey, bool defaultValue) { return this.GetMemberValue<bool>(sKey, defaultValue); }
-        public object Get(string sKey) { return this.GetMemberValue(sKey); }
+        public int Get(string sKey, int defaultValue) { return this.GetMemberValue(sKey, defaultValue); }
+        public string Get(string sKey, string defaultValue) { return this.GetMemberValue(sKey, defaultValue); }
+        public long Get(string sKey, long defaultValue) { return this.GetMemberValue(sKey, defaultValue); }
+        public double Get(string sKey, double defaultValue) { return this.GetMemberValue(sKey, defaultValue); }
+        public bool Get(string sKey, bool defaultValue) { return this.GetMemberValue(sKey, defaultValue); }
         public T Get<T>(string sKey) { return (T)this.GetMemberValue(sKey); }
 
         protected string BaseFolder { get; set; }
@@ -31,7 +30,7 @@ namespace ConfigSharp
             // #r "MyAssembly.dll" 
             var compilation = Compilation.Create("ConfigSnippet", new CompilationOptions(OutputKind.DynamicallyLinkedLibrary))
                 .AddSyntaxTrees(syntaxTree)
-                .AddReferences(new MetadataFileReference(this.GetType().Assembly.Location))
+                .AddReferences(new MetadataFileReference(GetType().Assembly.Location))
                 .AddReferences(new MetadataFileReference(typeof(object).Assembly.Location)) // mscorelib
                 .AddReferences(new MetadataFileReference(typeof(Uri).Assembly.Location)) // System.dll
                 .AddReferences(new MetadataFileReference(typeof(Container).Assembly.Location))
@@ -67,11 +66,14 @@ namespace ConfigSharp
                     Log.Verbose("HTTP request: " + fileName);
                     var req = (HttpWebRequest)WebRequest.Create(fileName);
                     var resp = (HttpWebResponse)req.GetResponse();
-                    var sr = new StreamReader(resp.GetResponseStream(), Encoding.UTF8);
+                    var stream = resp.GetResponseStream();
+                    if (stream == null) { throw new Exception("No response stream"); }
+                    var sr = new StreamReader(stream, encoding: Encoding.UTF8);
                     code = sr.ReadToEnd();
                     CurrentFile = fileName;
                 } else {
                     var pathPart = Path.GetDirectoryName(fileName);
+                    if (pathPart== null) { throw new Exception("File name has no path"); }
                     var filePart = Path.GetFileName(fileName);
 
                     if (string.IsNullOrEmpty(BaseFolder)) {

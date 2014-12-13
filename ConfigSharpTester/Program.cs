@@ -4,7 +4,7 @@ namespace ConfigSharpTester
 {
     public class MyConfig : ConfigSharp.Container
     {
-        public string SetupName { get; set; }
+        public string SetupName = "Production";
         public string StringMemberFromRootCs = "-empty-";
         public int IntPropertyFromRootCs { get; set; }
         public int IntFromDebugCs = -1;
@@ -20,7 +20,7 @@ namespace ConfigSharpTester
 
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             ConfigSharp.Global.Logger((logLevel, logMessage) => Console.WriteLine("ConfigSharp " + logLevel + " " + logMessage));
             ConfigSharp.Global.Instance = new MyConfig().Include("../../Configuration/Root.cs");
@@ -38,6 +38,7 @@ namespace ConfigSharpTester
             Console.WriteLine("Get(DateTimeProperty.Date.Year]         = " + Config.Global.Get("DateTimeProperty.Date.Year", -1));
             Console.WriteLine("Get<T>(DateTimeProperty).Date.Year      = " + Config.Global.Get<DateTime>("DateTimeProperty").Date.Year);
             Console.WriteLine("Get(NotExistingProperty)    [-default-] = " + Config.Global.Get("NotExistingProperty", "-default-"));
+            Console.WriteLine("Get(IntPropertyFromRootCs)         [42] = " + Config.Global.Get("IntPropertyFromRootCs", 41));
 
             Console.WriteLine("");
             Console.WriteLine("<ENTER> to continue");

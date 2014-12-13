@@ -12,6 +12,7 @@ namespace ConfigSharpSample
     public class Config : ConfigSharp.Global
     {
         public static MyConfigObject Global { get { return (MyConfigObject)ConfigSharp.Global.Instance; } }
+        public static string Get(string sKey, string defaultValue) { return ConfigSharp.Global.Instance.Get(sKey, defaultValue); }
     }
 
     class Program
@@ -27,7 +28,7 @@ namespace ConfigSharpSample
 
                 
                 // The same via getter with default
-                Console.WriteLine(@"Config.Global.Get(""TestProperty"") = " + Config.Global.Get("TestProperty", "default"));
+                Console.WriteLine(@"Config.Global.Get(""TestProperty"") = " + Config.Get("TestProperty", "default"));
             }
 
             {
