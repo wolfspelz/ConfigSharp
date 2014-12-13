@@ -21,6 +21,7 @@ Program.cs:
     {
       var config = new MyConfig();
       config.Include("ConfigFile.cs");
+      ...
       Console.WriteLine("config.SomeProperty = " + config.SomeProperty);
       ...
     }
