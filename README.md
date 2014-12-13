@@ -82,9 +82,13 @@ Without this wrapper you'd use:
 
 #### 3.3 Getter functions with string based property name and default value
 
-    var serverAddress = Config.Get(ServerAddress, "http://localhost:8080/");
-    var maxSize = Config.Get(MaxMessageSize, 100 * 1024 * 1024);
-    var formatJson = Config.Get(FormatJson, true);
+    var serverAddress = Config.Get("ServerAddress", "http://localhost:8080/");
+    var maxSize = Config.Get("MaxMessageSize", 100 * 1024 * 1024);
+    var formatJson = Config.Get("FormatResponseJson", true);
+
+Accessing complex properties with type:
+
+    var endDate = Config.Get<DateTime>("ServiceEndDate");
 
 ### 4. What you can change when using ConfigSharp
 
