@@ -7,6 +7,8 @@ namespace ConfigSharpSample
         public string TestProperty = "Initial value";
     }
 
+    // This helper makes the Config.Global.MyProperty syntax available
+    // instead of ConfigSharp.Global.Instance.MyProperty 
     public class Config : ConfigSharp.Global
     {
         public static MyConfigObject Global { get { return (MyConfigObject)ConfigSharp.Global.Instance; } }
