@@ -17,6 +17,7 @@ Program.cs:
         public int OrAsMemberVariable = 41;
         public DateTime OrRealCLRTypes;
         public string DatabasePassword { get; set; }
+        public string SetupName { get; set; }
     }
     
     static void Main(string[] args)
