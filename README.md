@@ -51,18 +51,13 @@ ConfigFile.cs:
 
 ConfigSharp will execute all public methods of all public classes of any namespace in a config file. 
 
-### Ubiquitous access to config settings
+### 3. Using config properties
 
-Integrated support for a global config object:
+After loading the settings into the config object:
 
     ConfigSharp.Global.Instance = new MyConfig().Include("ConfigFile.cs");
-    var prop = Config.Global.SomeProperty;
-    // or:
-    var prop = App.Settings.SomeProperty;
-
-### 3. Accessing config properties
-
-App settings / config properties / members of the config object can be accessed in different ways.
+    
+...you will use the properties. Your app settings / config properties / members of the config object can be accessed in different ways:
 
 #### 3.1 Properties of a config object instance
 
@@ -81,7 +76,7 @@ This needs a wrapper in your app code like:
         public static MyConfig Settings { get { return (MyConfig)ConfigSharp.Global.Instance; } }
     }
     
-Without this wrapper you'd need:
+Without this wrapper you'd use:
 
     var serverAddress = ConfigSharp.Global.Instance.ServerAddress;
 
