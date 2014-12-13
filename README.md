@@ -1,36 +1,43 @@
 ConfigSharp
 ===========
 
-Configure your .NET application with C# config files. Config files are C# source files, managed by the Visual Studio like any other code file, intellisensed, syntax checked, compiled, type safe. 
+Configure your .NET application with C# config files. Config files are C# source files, managed by the Visual Studio like any other code file, intellisensed, resharpered, syntax checked, compiled, type safe. 
 
-Write real code with control structures and classes in config files. Include other local or remote (HTTP) config files.
+Write real code with control structures and classes in config files. Include other local or remote (HTTP) config files. 
 
-No more key-value lists of string based app settings from XML. These settings are typed properties of CLR objects.
+No more key-value lists of string based app settings from XML. These settings are typed properties of CLR objects. 
+
+Config files are not C# script (.csx) files. They are C#, because they are code and code wants to be intellisensed, resharpered, syntax checked, compiled, type safe. 
+
+### What it does
+
+You have a config class which contains your app settings. An instance is populated by loading/executing C# based config files. You can then use memebrs/properties of the config object anywhere in your app. 
 
 ### Examples
 
 Program.cs:
 
-    public class MyConfig : ConfigSharp.Container
-    {
-        public string SomeProperty { get; set; }
-        public int OrAsMemberVariable = 41;
-        public DateTime OrRealCLRTypes;
-        public string DatabasePassword { get; set; }
-        public string SetupName { get; set; }
-    }
-    
     static void Main(string[] args)
     {
       var config = new MyConfig();
       config.Include("ConfigFile.cs");
+      ...
       Console.WriteLine("config.SomeProperty = " + config.SomeProperty);
       ...
     }
 
+    public class MyConfig : ConfigSharp.Container
+    {
+        public string SomeProperty { get; set; }
+        public int OrAsMemberVariable = 41;
+        public DateTime OrPlainOldCLRTypes;
+        public string DatabasePassword { get; set; }
+        public string SetupName { get; set; }
+    }
+    
 ConfigFile.cs:
 
-    namespace MyProgram.Configuration
+    namespace MyProgram.Configuration // any namespace, preferably the one given by the project structure
     {
         class ConfigFile // Any class name, but preferably same as file name
         {
@@ -41,6 +48,8 @@ ConfigFile.cs:
             }
         }
     }
+
+ConfigSharp will execute any/all (public) methods of any/all (public) classes of any namespace in a config file. 
 
 ### Ubiquitous access to config settings
 
@@ -71,7 +80,7 @@ Root.cs:
         {
           config.SomeProperty = "http://localhost:8080/";
           config.OrAsMemberVariable = 42;
-          config.OrRealCLRTypes = DateTime.Now;
+          config.OrPlainOldCLRTypes = DateTime.Now;
           config.DatabasePassword = "-empty-";
           
           config.Include("Setup.cs");
@@ -111,5 +120,41 @@ Production.cs:
         }
       }
     }
+
+But it is just a BCP (best current practice). It is not hard coded in the library. You can roll your own policy. It's plain C#. 
+
+### Accessing config properties
+
+App settings / config properties / members of the config object can be accessed in different ways.
+
+#### Properties of a config object instance
+
+xx
+
+#### Properties of a global config object
+
+yy
+
+#### Getter functions with string based property name and default value
+
+zz
+
+### What is built in an what is not
+
+Not built in and for you to change:
+- namespace in config files
+- class names in config files
+- method names in config files
+- config object class name, e.g. MyConfig
+- property names (of course)
+- C# properties or memeber variables with initialization
+- Global config accessor name, e.g. Config.Global.MyProperty or App.Settings.MyProperty
+- Configuration management policy, because it is implemented by your config files
+
+Built in:
+- Config class must be derived from ConfigSharp.Container
+
+
+
 
 
