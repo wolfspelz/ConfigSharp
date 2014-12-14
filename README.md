@@ -1,13 +1,13 @@
 ConfigSharp
 ===========
 
-Configure your .NET application with C# config files. Config files are C# source files, managed by the Visual Studio like any other code file, intellisensed, resharpered, syntax checked, compiled, type safe. 
+Configure your .NET application with C# config files. Config files are C# source files, managed by the Visual Studio like any other code file, intellisensed, refactorable, resharpered, syntax checked, compiled, type safe. 
 
 Write real code with control structures and classes in config files. Include other local or remote (HTTP) config files. 
 
-No more key-value lists of string based app settings from XML. These settings are typed properties of CLR objects. They can be complex objects. No more workarounds for complex settings, which do not fit properly in strings. 
+No more key-value lists of string based app settings from XML. These settings are typed properties of CLR objects, even aggregated types. No more workarounds for complex settings, which do not fit properly in strings. 
 
-Devops friendly, because admins can *program* their config files. Developers can document settings with examples in their code, which is also the admins's config file.
+Devops friendly, because admins can *program* their config files. Developers can document settings with examples in *their own code*, which is also the *admins's config file*. 
 
 ### 1. What it does
 
