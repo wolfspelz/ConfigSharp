@@ -11,7 +11,7 @@ Devops friendly, because admins can *program* their config files. Developers can
 
 ### 1. What it does
 
-You have a config class which contains your app settings. An instance is populated by loading/executing C# based config files. You can then use memebrs/properties of the config object anywhere in your app. 
+You have a config class which contains your app settings. An instance is populated by loading/executing C# based config files. You can then use properties of the config object anywhere in your app. 
 
 ### 2. Examples
 
