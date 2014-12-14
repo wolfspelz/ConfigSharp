@@ -22,41 +22,6 @@ namespace ConfigSharp
         protected string BaseFolder { get; set; }
         public string CurrentFile { get; protected set; }
 
-        public void Load(string code)
-        {
-            var syntaxTree = SyntaxTree.ParseText(code);
-
-            // Should support #r syntax:
-            // #r "MyAssembly.dll" 
-            var compilation = Compilation.Create("ConfigSnippet", new CompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-                .AddSyntaxTrees(syntaxTree)
-                .AddReferences(new MetadataFileReference(GetType().Assembly.Location))
-                .AddReferences(new MetadataFileReference(typeof(object).Assembly.Location)) // mscorelib
-                .AddReferences(new MetadataFileReference(typeof(Uri).Assembly.Location)) // System.dll
-                .AddReferences(new MetadataFileReference(typeof(Container).Assembly.Location))
-                ;
-
-            using (var assemblyStream = new MemoryStream()) {
-                var compilationResult = compilation.Emit(assemblyStream);
-                if (compilationResult.Success) {
-                    var compiledAssembly = assemblyStream.ToArray();
-                    var loadedAssembly = Assembly.Load(compiledAssembly);
-                    var assemblyTypes = loadedAssembly.GetTypes();
-                    foreach (var type in assemblyTypes) {
-                        var members = type.GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static);
-                        foreach (var member in members) {
-                            type.InvokeMember(member.Name, BindingFlags.Default | BindingFlags.InvokeMethod, null, null, new object[] { this });
-                        }
-                    }
-                } else {
-                    Log.Error(CurrentFile + " Diagnostics:");
-                    foreach (var diagnostic in compilationResult.Diagnostics) {
-                        Log.Error(diagnostic.ToString());
-                    }
-                }
-            }
-        }
-
         public Container Include(string fileName)
         {
             string code = "";
@@ -103,5 +68,41 @@ namespace ConfigSharp
 
             return this;
         }
+
+        public void Load(string code)
+        {
+            var syntaxTree = SyntaxTree.ParseText(code);
+
+            // Should support #r syntax:
+            // #r "MyAssembly.dll" 
+            var compilation = Compilation.Create("ConfigSnippet", new CompilationOptions(OutputKind.DynamicallyLinkedLibrary))
+                .AddSyntaxTrees(syntaxTree)
+                .AddReferences(new MetadataFileReference(GetType().Assembly.Location))
+                .AddReferences(new MetadataFileReference(typeof(object).Assembly.Location)) // mscorelib
+                .AddReferences(new MetadataFileReference(typeof(Uri).Assembly.Location)) // System.dll
+                .AddReferences(new MetadataFileReference(typeof(Container).Assembly.Location))
+                ;
+
+            using (var assemblyStream = new MemoryStream()) {
+                var compilationResult = compilation.Emit(assemblyStream);
+                if (compilationResult.Success) {
+                    var compiledAssembly = assemblyStream.ToArray();
+                    var loadedAssembly = Assembly.Load(compiledAssembly);
+                    var assemblyTypes = loadedAssembly.GetTypes();
+                    foreach (var type in assemblyTypes) {
+                        var members = type.GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static);
+                        foreach (var member in members) {
+                            type.InvokeMember(member.Name, BindingFlags.Default | BindingFlags.InvokeMethod, null, null, new object[] { this });
+                        }
+                    }
+                } else {
+                    Log.Error(CurrentFile + " Diagnostics:");
+                    foreach (var diagnostic in compilationResult.Diagnostics) {
+                        Log.Error(diagnostic.ToString());
+                    }
+                }
+            }
+        }
+
     }
 }
