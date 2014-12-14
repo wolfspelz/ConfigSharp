@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandlineParser.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="LibLogger.cs" />

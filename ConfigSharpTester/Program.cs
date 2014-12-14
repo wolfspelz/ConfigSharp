@@ -11,6 +11,7 @@ namespace ConfigSharpTester
         public int IntFromProductionCs = -1;
         public DateTime DateTimeProperty { get; set; }
         public string PropertyFromHttpInclude { get; set; }
+        public string UriBuilderResult { get; set; }
     }
 
     public class Config : ConfigSharp.Global
@@ -32,6 +33,7 @@ namespace ConfigSharpTester
             Console.WriteLine("IntFromDebugCs                     [-1] = " + Config.Global.IntFromDebugCs);
             Console.WriteLine("IntFromProductionCs                [44] = " + Config.Global.IntFromProductionCs);
             Console.WriteLine("DateTimeProperty                        = " + Config.Global.DateTimeProperty);
+            Console.WriteLine("UriBuilderResult           [http://...] = " + Config.Global.UriBuilderResult);
             Console.WriteLine("PropertyFromHttpInclude     [Remote...] = " + Config.Global.PropertyFromHttpInclude);
             Console.WriteLine("Get(StringMemberFromRootCs)  [Local...] = " + Config.Global.Get("StringMemberFromRootCs", "-default-"));
             Console.WriteLine("Get(IntPropertyFromRootCs)         [42] = " + Config.Global.Get("IntPropertyFromRootCs", 41));

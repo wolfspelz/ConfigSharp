@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ConfigSharp")]
-[assembly: AssemblyDescription("Configure your .NET application with C# config files. Config files are C# source files, intellisensed, refactorable, resharpered, syntax checked, compiled, type safe. Write real code with control structures and classes in config files. Include other config files and remote (HTTP) config snippets.")]
+[assembly: AssemblyDescription("Configure your .NET application with C# config files. Config files are C# source files: intellisensed, refactorable, resharpered, syntax checked, compiled, type safe. Write real code with control structures and classes in config files. Include other config files and remote (HTTP) config snippets.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Heiner Wolf")]
 [assembly: AssemblyProduct("ConfigSharp")]

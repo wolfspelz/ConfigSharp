@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -38,7 +39,7 @@ namespace ConfigSharp
                     CurrentFile = fileName;
                 } else {
                     var pathPart = Path.GetDirectoryName(fileName);
-                    if (pathPart== null) { throw new Exception("File name has no path"); }
+                    if (pathPart == null) { throw new Exception("File name has no path"); }
                     var filePart = Path.GetFileName(fileName);
 
                     if (string.IsNullOrEmpty(BaseFolder)) {
@@ -73,15 +74,33 @@ namespace ConfigSharp
         {
             var syntaxTree = SyntaxTree.ParseText(code);
 
-            // Should support #r syntax:
-            // #r "MyAssembly.dll" 
             var compilation = Compilation.Create("ConfigSnippet", new CompilationOptions(OutputKind.DynamicallyLinkedLibrary))
                 .AddSyntaxTrees(syntaxTree)
                 .AddReferences(new MetadataFileReference(GetType().Assembly.Location))
                 .AddReferences(new MetadataFileReference(typeof(object).Assembly.Location)) // mscorelib
-                .AddReferences(new MetadataFileReference(typeof(Uri).Assembly.Location)) // System.dll
+                //.AddReferences(new MetadataFileReference(typeof(Uri).Assembly.Location)) // System.dll
                 .AddReferences(new MetadataFileReference(typeof(Container).Assembly.Location))
                 ;
+
+            //var xx = typeof(UriBuilder).AssemblyQualifiedName;
+
+            var lines = code.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+            foreach (var line in lines) {
+                if (line.StartsWith("//reference ")) {
+                    var tokens = CommandlineParser.Parse(line);
+                    if (tokens.Count != 2) { throw new Exception("//reference needs an argument"); }
+                    var sReference = tokens[1].Trim(new[] { '"' });
+                    if (Path.IsPathRooted(sReference)) {
+                        // Absolute Path: use as given
+                    } else {
+                        // AssemblyQualifiedName
+                        var type = Type.GetType(sReference);
+                        if (type == null) { throw new Exception("No type for " + sReference); }
+                        sReference = type.Assembly.Location;
+                    }
+                    compilation = compilation.AddReferences(new MetadataFileReference(sReference));
+                }
+            }
 
             using (var assemblyStream = new MemoryStream()) {
                 var compilationResult = compilation.Emit(assemblyStream);

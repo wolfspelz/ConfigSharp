@@ -1,3 +1,6 @@
+//reference "C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll"
+//reference "System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+
 using System;
 
 namespace ConfigSharpTester.Configuration
@@ -6,8 +9,9 @@ namespace ConfigSharpTester.Configuration
     {
         public static void Run(ConfigSharpTester.MyConfig config)
         {
-            config.Include("https://raw.githubusercontent.com/wolfspelz/ConfigSharp/master/ConfigSharpTester/Configuration/Remote.cs");
-            //config.Include("Remote.cs");
+            //config.Include("https://raw.githubusercontent.com/wolfspelz/ConfigSharp/master/ConfigSharpTester/Configuration/Remote.cs");
+            var ub = new UriBuilder("http", "blog.wolfspelz.de", 80, "/2014/12/configsharp-scripting-configuration-in-c.html");
+            config.UriBuilderResult = ub.ToString();
 
             config.Include("Setup.cs");
             config.IntPropertyFromRootCs = 42;
