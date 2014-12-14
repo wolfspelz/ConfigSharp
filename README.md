@@ -7,6 +7,8 @@ Write real code with control structures and classes in config files. Include oth
 
 No more key-value lists of string based app settings from XML. These settings are typed properties of CLR objects. 
 
+Devops friendly, because admins can *program* their config files. Developers can document settings with examples in their code, which is also the admins's config file.
+
 ### 1. What it does
 
 You have a config class which contains your app settings. An instance is populated by loading/executing C# based config files. You can then use memebrs/properties of the config object anywhere in your app. 
@@ -17,11 +19,11 @@ Program.cs:
 
     static void Main(string[] args)
     {
-      var config = new MyConfig();
-      config.Include("ConfigFile.cs");
-      ...
-      Console.WriteLine("config.SomeProperty = " + config.SomeProperty);
-      ...
+        var config = new MyConfig();
+        config.Include("ConfigFile.cs");
+        ...
+        Console.WriteLine("config.SomeProperty = " + config.SomeProperty);
+        ...
     }
 
     public class MyConfig : ConfigSharp.Container
@@ -53,7 +55,7 @@ ConfigSharp will execute all public methods of all public classes of any namespa
 
 After loading the settings into the config object...
 
-    new MyConfig().Include("ConfigFile.cs");
+    new MyConfig().Include("../../ConfigFile.cs");
     
 ...you will use the properties. Your app settings / config properties / members of the config object can be accessed in different ways:
 
@@ -86,7 +88,7 @@ Without this wrapper you'd use:
     // Complex properties with type:
     var endDate = Config.Global.Get<DateTime>("ServiceEndDate");
 
-You could also omit the "Global." and do
+You could also omit the *Global.* and do
 
     var serverAddress = Config.Get("ServerAddress", "http://localhost:8080/");
     // or
@@ -100,9 +102,35 @@ If you augment the your wrapper with a getter:
         return ConfigSharp.Global.Instance.Get(key, defaultValue);
     }
 
-### 4. What you can change when using ConfigSharp
+### 4. Absolute and relative paths
 
-Most libraries are opinionated. They require you to do things in certain ways. ConfigSharp has a very small API and it gives a lot of freedom with respect to naming and policies. Here are the things you can change:
+#### 4.1 Local files
+
+The first config.Include() must point to the include file *relative to the working directory* or must be an *absolute path*. Include()s inside config files will take file names relative to the first include file. The config object has a BaseFolder property. If it is set, then it is used a s a base for relative paths instead of the app's working directory.
+
+Example (in the debug environment the first call might be):
+
+    config.Include("../../ConfigFile.cs");
+
+Example (first call in the production environment):
+
+    config.Include("Configuration/ConfigFile.cs");
+    // or
+    config.Include(@"D:\MyApp\ConfigFile.cs");
+
+Example (inside config file relative to parent):
+
+    config.Include("AdditionalConfigFile.cs");
+
+### 4.2 HTTP remote include
+
+The config.Include() method also digests http:// and https:// URLs. Example:
+
+    config.Include("https://my.config.server/MyApp/Configuration");
+    
+### 5. What you can change when using ConfigSharp
+
+Many libraries are opinionated. They require you to do things in certain ways. ConfigSharp has a very small API and it gives a lot of freedom with respect to naming and policies. Here are the things you can change:
 - namespace in config files
 - class names in config files
 - method names in config files
@@ -111,21 +139,24 @@ Most libraries are opinionated. They require you to do things in certain ways. C
 - C# properties or memeber variables with initialization
 - global config accessor name, e.g. Config.Global.MyProperty or App.Settings.MyProperty
 - configuration management policy, because it is implemented by your config files
+- value of the BaseFolder property of the config object from inside the config file
 
-### 5. Configuration managament policy
+### 6. Configuration managament policy
 
-When running in different environments (Debug, Build, Production), then you need different config files. There are debug only settings, user names, passwords , and Web service addresses, which depend on the environment. The operating department might keep a few secrets with respect to production database passwords and payment provider accounts. So, we need a way to switch easily and automatically between environments. That's where a configuration management policy comes in.  
+When running in different environments (Debug, Build, Production), then you need different config files. There are debug only settings, user names, passwords, and Web service addresses, which depend on the environment. The operating department might keep a few secrets with respect to production database passwords and payment provider accounts. We need a way to switch easily and automatically between environments. That's where a configuration management policy comes in.  
 
 Configuration management should 
 - make switching setups easy,
-- default to a "Production" configuration,
 - force developers to set default values when adding properties,
-- allow developers to assign probable "production" values for new properties,
+- allow developers to assign probable *production* values for new properties,
 - allow admins to overwrite default values easily,
-- allow for repository checkout (svn update, git pull) based deployment
+- allow for repository checkout (svn update, git pull) based deployment,
+- default to a working *Production* configuration,
+- 
 
 The recommended policy is to 
 - have a Configuration folder with all local config files
+- as a folder in the Visual Studio project, then
 - include Root.cs, which 
 - sets default values for all properties, then
 - includes a Setup.cs, which
@@ -133,9 +164,8 @@ The recommended policy is to
 - is evaluated by a switch/case statement in Root.cs, which
 - includes another config file with specific settings for Debug, Build, or Production, where
 - Production.cs will not be in the source repository to protected sensitive data, and
-- Setup.cs will not be in the source repository, because it will be different for each setup.
-
-This is just a BCP (best current practice). It is not hard coded in the library. You can roll your own policy. After all it's plain C# and you write it.
+- Setup.cs will not be in the source repository, because it will be different for each setup, and
+- let the build process copy the entire folder to the bin output.
 
 Root.cs:
 
@@ -145,17 +175,22 @@ Root.cs:
       {
         public static void Run(MyProgram.MyConfig config)
         {
-          config.SomeProperty = "http://localhost:8080/";
-          config.OrAsMemberVariable = 42;
-          config.OrPlainOldCLRTypes = DateTime.Now;
-          config.DatabasePassword = "-empty-";
-          
-          config.Include("Setup.cs");
+            // Initialize all settings
+            // This is a kind of config reference, which lists all settings with examples
+            // especially for admins who do not check the source code, but read/write config files
+            config.SomeProperty = "http://localhost:8080/";
+            config.OrAsMemberVariable = 42;
+            config.OrPlainOldCLRTypes = DateTime.Now;
+            config.DatabasePassword = "-empty-";
 
-          switch (config.SetupName) {
-            case "Debug": config.Include("Debug.cs"); break;
-            case "Production": config.Include("Production.cs"); break;
-          }
+            // Setup.cs just sets SetupName
+            config.Include("Setup.cs");
+            
+            // Overwrite settings for the environment
+            switch (config.SetupName) {
+                case "Debug": config.Include("Debug.cs"); break;
+                case "Production": config.Include("Production.cs"); break;
+            }
         }
       }
     }
@@ -168,9 +203,9 @@ Setup.cs (of a production/live system):
       {
         public static void Run(MyProgram.MyConfig config)
         {
-          //config.SetupName == "Debug") { 
-          //config.SetupName == "Build") { 
-          config.SetupName == "Production") { 
+            //config.SetupName == "Debug") { 
+            //config.SetupName == "Build") { 
+            config.SetupName == "Production") { 
         }
       }
     }
@@ -183,11 +218,13 @@ Production.cs:
       {
         public static void Run(MyProgram.MyConfig config)
         {
-          config.DatabasePassword = "jDf2o3Gzdt6iZk"; // Real production DB password
+            config.DatabasePassword = "jDf2o3Gzdt6iZk"; // Real production DB password
         }
       }
     }
 
-
-
+This is just a BCP (best current practice). It is not hard coded in the library. You can roll your own policy. After all it's plain C# and you write it. You could also:
+- omit the Setup.cs and check the host name to find the proper configuration,
+- have settings for all environments in one config file, except a few production secrets,
+- implement settings as member variables of your config class with default values and have only the overrides in the config file.
 
