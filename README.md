@@ -1,7 +1,7 @@
 ConfigSharp
 ===========
 
-Configure your .NET application with C# config files. Config files are C# source files, managed by the Visual Studio like any other code file, intellisensed, refactorable, resharpered, syntax checked, compiled, type safe. 
+Configure your .NET application with C# config files. Config files are C# source files, managed by Visual Studio like any other code file, intellisensed, refactorable, resharpered, syntax checked, compiled, type safe. 
 
 Write real code with control structures and classes in config files. Include other local or remote (HTTP) config files. 
 
