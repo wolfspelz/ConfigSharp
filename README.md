@@ -22,8 +22,11 @@ Program.cs:
         var config = new MyConfig();
         config.Include("ConfigFile.cs");
         ...
-        Console.WriteLine("config.SomeProperty = " + config.SomeProperty);
-        ...
+        var prop1 = config.SomeProperty;
+        // or
+        var prop2 = Config.Global.SomeProperty;
+        var prop3 = App.Settings.SomeProperty;
+        var prop4 = AppSettings.Get("SomeProperty", "default");
     }
 
     public class MyConfig : ConfigSharp.Container
