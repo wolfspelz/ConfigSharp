@@ -1,4 +1,6 @@
-﻿using System;
+#pragma reference "C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll"
+
+using System;
 
 namespace ConfigSharpTester.Configuration
 {
