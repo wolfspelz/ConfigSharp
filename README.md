@@ -5,7 +5,7 @@ Configure your .NET application with C# config files. Config files are C# source
 
 Write real code with control structures and classes in config files. Include other local or remote (HTTP) config files. 
 
-No more key-value lists of string based app settings from XML. These settings are typed properties of CLR objects. 
+No more key-value lists of string based app settings from XML. These settings are typed properties of CLR objects. They can be complex objects. No more workarounds for complex settings, which do not fit properly in strings. 
 
 Devops friendly, because admins can *program* their config files. Developers can document settings with examples in their code, which is also the admins's config file.
 
@@ -147,12 +147,11 @@ When running in different environments (Debug, Build, Production), then you need
 
 Configuration management should 
 - make switching setups easy,
-- force developers to set default values when adding properties,
-- allow developers to assign probable *production* values for new properties,
+- encourage developers to set default values when adding properties,
+- allow developers to assign *probable production values* for new properties,
 - allow admins to overwrite default values easily,
-- allow for repository checkout (svn update, git pull) based deployment,
-- default to a working *Production* configuration,
-- 
+- enable binary repository checkout based ready to run deployment (svn update, git pull),
+- default to a working *production* configuration.
 
 The recommended policy is to 
 - have a Configuration folder with all local config files
