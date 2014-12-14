@@ -7,8 +7,6 @@ Write real code with control structures and classes in config files. Include oth
 
 No more key-value lists of string based app settings from XML. These settings are typed properties of CLR objects. 
 
-Config files are not C# script (.csx) files. They are C#, because they are code and code wants to be intellisensed, resharpered, syntax checked, compiled, type safe. 
-
 ### 1. What it does
 
 You have a config class which contains your app settings. An instance is populated by loading/executing C# based config files. You can then use memebrs/properties of the config object anywhere in your app. 
