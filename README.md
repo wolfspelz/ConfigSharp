@@ -122,7 +122,7 @@ Example (inside config file relative to parent):
 
     config.Include("AdditionalConfigFile.cs");
 
-### 4.2 HTTP remote include
+#### 4.2 HTTP remote include
 
 The config.Include() method also digests http:// and https:// URLs. Example:
 
