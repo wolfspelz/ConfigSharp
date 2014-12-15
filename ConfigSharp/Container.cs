@@ -44,36 +44,62 @@ namespace ConfigSharp
         {
             string code = "";
 
+            if (fileName.StartsWith("http://") || fileName.StartsWith("https://")) {
+                code = LoadHttp(fileName);
+            } else {
+                code = LoadFile(fileName);
+            }
+
+            return code;
+        }
+
+        public string LoadFile(string fileName)
+        {
+            string code = "";
+
             try {
-                if (fileName.StartsWith("http://") || fileName.StartsWith("https://")) {
-                    Log.Info("HTTP request: " + fileName);
-                    var req = (HttpWebRequest)WebRequest.Create(fileName);
-                    var resp = (HttpWebResponse)req.GetResponse();
-                    var stream = resp.GetResponseStream();
-                    if (stream == null) { throw new Exception("No response stream"); }
-                    var sr = new StreamReader(stream, encoding: Encoding.UTF8);
-                    code = sr.ReadToEnd();
-                } else {
-                    var pathPart = Path.GetDirectoryName(fileName);
-                    if (pathPart == null) { throw new Exception("File name has no path"); }
-                    var filePart = Path.GetFileName(fileName);
-
-                    if (string.IsNullOrEmpty(BaseFolder)) {
-                        if (Path.IsPathRooted(fileName)) {
-                            BaseFolder = pathPart;
-                        } else {
-                            BaseFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathPart);
-                        }
-                        Log.Info("Base folder: " + BaseFolder);
-                    }
-
-                    var filePath = Path.Combine(BaseFolder, filePart);
-
-                    Log.Info("Read file: " + filePath);
-                    code = File.ReadAllText(filePath);
+                var pathPart = Path.GetDirectoryName(fileName);
+                if (pathPart == null) {
+                    throw new Exception("File name has no path");
                 }
+                var filePart = Path.GetFileName(fileName);
+
+                if (string.IsNullOrEmpty(BaseFolder)) {
+                    if (Path.IsPathRooted(fileName)) {
+                        BaseFolder = pathPart;
+                    } else {
+                        BaseFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathPart);
+                    }
+                    Log.Info("Base folder: " + BaseFolder);
+                }
+
+                var filePath = Path.Combine(BaseFolder, filePart);
+
+                Log.Info("Read file: " + filePath);
+                code = File.ReadAllText(filePath);
             } catch (Exception ex) {
                 Log.Error(ex.Message + "(" + fileName + ")");
+            }
+
+            return code;
+        }
+
+        public static string LoadHttp(string url)
+        {
+            string code = "";
+
+            try {
+                Log.Info("HTTP request: " + url);
+                var req = (HttpWebRequest)WebRequest.Create(url);
+                var resp = (HttpWebResponse)req.GetResponse();
+                var stream = resp.GetResponseStream();
+                if (stream == null) {
+                    throw new Exception("No response stream");
+                }
+                var sr = new StreamReader(stream, encoding: Encoding.UTF8);
+                code = sr.ReadToEndAsync().Result;
+            } catch (Exception ex) {
+                Log.Error(ex.Message + "(" + url + ")");
             }
 
             return code;

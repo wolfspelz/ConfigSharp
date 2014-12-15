@@ -2,8 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http;
 using ConfigSharp;
+using Microsoft.Owin.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Owin;
 
 namespace UnitTests
 {
@@ -179,8 +187,7 @@ namespace UnitTests
         public void Getter()
         {
             // Arrange
-            var config = new TestConfig
-            {
+            var config = new TestConfig {
                 IntMember = 41,
                 IntProperty = 41,
                 StringMember = "41",
@@ -199,8 +206,7 @@ namespace UnitTests
         public void TypedGetter()
         {
             // Arrange
-            var config = new TestConfig
-            {
+            var config = new TestConfig {
                 DateTimeMember = new DateTime(2014, 1, 2, 3, 4, 5),
                 DateTimeProperty = new DateTime(2015, 6, 7, 8, 9, 10),
             };
@@ -214,8 +220,7 @@ namespace UnitTests
         public void HierarchicalTypedGetter()
         {
             // Arrange
-            var config = new TestConfig
-            {
+            var config = new TestConfig {
                 DateTimeMember = new DateTime(2014, 1, 2, 3, 4, 5),
                 DateTimeProperty = new DateTime(2015, 6, 7, 8, 9, 10),
             };
@@ -376,6 +381,77 @@ namespace UnitTests
             Assert.IsTrue(logs[0].Message.StartsWith("Base folder:"));
             Assert.AreEqual("Info", logs[1].Level);
             Assert.IsTrue(logs[1].Message.StartsWith("Read file:"));
+        }
+
+        public class Startup
+        {
+            public void Configuration(IAppBuilder appBuilder)
+            {
+                var config = new HttpConfiguration();
+                config.Routes.MapHttpRoute(
+                    name: "DefaultApi",
+                    routeTemplate: "{controller}/{id}",
+                    defaults: new { controller = "Home", id = RouteParameter.Optional }
+                );
+                appBuilder.UseWebApi(config);
+            }
+        }
+        public class HomeController : ApiController
+        {
+            public HttpResponseMessage Get()
+            {
+                const string body = @"
+namespace UnitTests
+{
+    class ExecuteCodeWithHttpIncludeConfigFile2
+    {
+        public static void Run(UnitTests.TestContainer.TestConfig config)
+        {
+            config.IntMember = 42;
+        }
+    }
+}
+";
+                return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(body, Encoding.UTF8, "text/plain") };
+            }
+        }
+        [TestMethod]
+        public void ExecuteCodeWithHttpInclude()
+        {
+            // Arrange
+            const string code =
+@"
+namespace UnitTests
+{
+    class ExecuteCodeWithHttpIncludeConfigFile
+    {
+        public static void Run(UnitTests.TestContainer.TestConfig config)
+        {
+            config.Include(""http://localhost:19377"");
+        }
+    }
+}
+";
+            var config = new TestConfig();
+            string baseAddress = "http://localhost:19377/";
+            var done = new AutoResetEvent(false);
+            using (WebApp.Start<Startup>(url: baseAddress)) {
+                Task.Factory.StartNew(() => {
+                    //var client = new HttpClient();
+                    //var response = client.GetAsync(baseAddress).Result;
+                    //var result = response.Content.ReadAsStringAsync().Result;
+                    //Console.WriteLine(result); 
+
+                    // Act
+                    config.Execute(code, new List<string>());
+
+                    done.Set();
+                });
+                done.WaitOne(Timeout.Infinite, false);
+            }
+
+            // Assert
+            Assert.AreEqual(42, config.IntMember);
         }
 
     }
