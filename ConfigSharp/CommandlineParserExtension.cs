@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ConfigSharp
 {
-    internal static class CommandlineParserExtension
+    public static class CommandlineParserExtension
     {
         public static List<string> ParseCommandline(this string s)
         {
