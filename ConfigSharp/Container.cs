@@ -46,7 +46,7 @@ namespace ConfigSharp
 
             try {
                 if (fileName.StartsWith("http://") || fileName.StartsWith("https://")) {
-                    Log.Verbose("HTTP request: " + fileName);
+                    Log.Info("HTTP request: " + fileName);
                     var req = (HttpWebRequest)WebRequest.Create(fileName);
                     var resp = (HttpWebResponse)req.GetResponse();
                     var stream = resp.GetResponseStream();
@@ -64,12 +64,12 @@ namespace ConfigSharp
                         } else {
                             BaseFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathPart);
                         }
-                        Log.Info("BaseFolder: " + BaseFolder);
+                        Log.Info("Base folder: " + BaseFolder);
                     }
 
                     var filePath = Path.Combine(BaseFolder, filePart);
 
-                    Log.Verbose("File open: " + filePath);
+                    Log.Info("Read file: " + filePath);
                     code = File.ReadAllText(filePath);
                 }
             } catch (Exception ex) {

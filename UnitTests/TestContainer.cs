@@ -21,6 +21,12 @@ namespace UnitTests
             public string ExecuteCodeWithReferenceResult { get; set; }
         }
 
+        private class TestLogLine
+        {
+            public string Level { get; set; }
+            public string Message { get; set; }
+        }
+
         // ----------------------------------------------------------------------
 
         [TestMethod]
@@ -31,7 +37,7 @@ namespace UnitTests
 @"
 namespace UnitTests
 {
-    class ExecuteCodeConfigFile
+    class LoadCodeFromAbsolutePathConfigFile
     {
         public static void Run(UnitTests.TestContainer.TestConfig config)
         {
@@ -337,6 +343,39 @@ namespace UnitTests
 
             // Assert
             Assert.AreEqual(Path.Combine(tempPath, fileName), Path.Combine(config.BaseFolder, fileName));
+        }
+
+        [TestMethod]
+        public void LogLoad()
+        {
+            // Arrange
+            const string code =
+@"
+namespace UnitTests
+{
+    class LogLoadConfigFile
+    {
+        public static void Run(UnitTests.TestContainer.TestConfig config)
+        {
+            config.IntMember = 42;
+        }
+    }
+}
+";
+            string fileName = Path.GetTempPath() + "ConfigSharp-UnitTest-LogLoad.cs";
+            File.WriteAllText(fileName, code);
+            var logs = new List<TestLogLine>();
+            ConfigSharp.Global.Logger((logLevel, logMessage) => logs.Add(new TestLogLine { Level = logLevel, Message = logMessage }));
+            var config = new TestConfig();
+
+            // Act
+            var loadedCode = config.Load(fileName);
+
+            // Assert
+            Assert.AreEqual("Info", logs[0].Level);
+            Assert.IsTrue(logs[0].Message.StartsWith("Base folder:"));
+            Assert.AreEqual("Info", logs[1].Level);
+            Assert.IsTrue(logs[1].Message.StartsWith("Read file:"));
         }
 
     }
