@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ConfigSharp
 {
-    internal static class CommandlineParser
+    internal static class CommandlineParserExtension
     {
-        public static List<string> Parse(string sLine)
+        public static List<string> ParseCommandline(this string s)
         {
             var args = new List<string>();
 
@@ -18,7 +18,7 @@ namespace ConfigSharp
             int nPos = 0;
             while (!bDone) {
                 bool bIsData = false;
-                switch (sLine[nPos]) {
+                switch (s[nPos]) {
                     case '"':
                         if (!bInString) {
                             bInString = true;
@@ -46,10 +46,10 @@ namespace ConfigSharp
 
                 if (!bDone) {
                     if (bIsData) {
-                        sToken += sLine[nPos];
+                        sToken += s[nPos];
                     }
                     nPos++;
-                    bDone = (nPos >= sLine.Length);
+                    bDone = (nPos >= s.Length);
                 }
             }
 

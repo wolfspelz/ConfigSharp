@@ -10,7 +10,7 @@ namespace ConfigSharpTester.Configuration
         public static void Run(ConfigSharpTester.MyConfig config)
         {
             //config.Include("https://raw.githubusercontent.com/wolfspelz/ConfigSharp/master/ConfigSharpTester/Configuration/Remote.cs");
-            var ub = new UriBuilder("http", "blog.wolfspelz.de", 80, "/2014/12/configsharp-scripting-configuration-in-c.html");
+            var ub = new UriBuilder("http", "blog.wolfspelz.de");
             config.UriBuilderResult = ub.ToString();
 
             config.Include("Setup.cs");

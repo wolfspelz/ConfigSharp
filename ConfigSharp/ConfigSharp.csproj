@@ -45,9 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandlineParser.cs" />
+    <Compile Include="CommandlineParserExtension.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="ILoader.cs" />
     <Compile Include="LibLogger.cs" />
     <Compile Include="PropValueExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
