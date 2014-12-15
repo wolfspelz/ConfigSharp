@@ -130,8 +130,38 @@ Example (inside config file relative to parent):
 The config.Include() method also digests http:// and https:// URLs. Example:
 
     config.Include("https://my.config.server/MyApp/Configuration");
+
+### 5. Additional assemblies
+
+Config Sharp addes references to mscorelib and System.dll. That's enough for property assignments. If your config class or your config file code needs additional types, then the assemblies have to be referenced in the config file. 
+
+Example (with absolute path):
+
+    //reference "C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll"
+
+Example (with an Assembly Qualified Name of any type of the assembly):
+
+    //reference "System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
     
-### 5. What you can change when using ConfigSharp
+The *//reference* looks like a comment. It actually is a comment for the Visual Studio compiler. But *//reference* is recognized by ConfigSharp. 
+
+Example config file:
+
+    //reference "System.UriBuilder, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+    namespace MyProgram.Configuration
+    {
+        class ConfigFile
+        {
+            public static void Run(MyProgram.MyConfig config)
+            {
+                config.HomePageUrl = new UriBuilder("http", "blog.wolfspelz.de");
+            }
+        }
+    }
+
+Remark: unfortunately, the *#r* notation of C#-Script is not possible, because the code will be managed by Visual Studio, which will complain about an unknown preprocessor directive. Even *#pragma reference* gives a warning. 
+
+### 6. What you can change when using ConfigSharp
 
 Many libraries are opinionated. They require you to do things in certain ways. ConfigSharp has a very small API and it gives a lot of freedom with respect to naming and policies. Here are the things you can change:
 - namespace in config files
@@ -144,7 +174,7 @@ Many libraries are opinionated. They require you to do things in certain ways. C
 - configuration management policy, because it is implemented by your config files
 - value of the BaseFolder property of the config object from inside the config file
 
-### 6. Configuration managament policy
+### 7. Configuration managament policy
 
 When running in different environments (Debug, Build, Production), then you need different config files. There are debug only settings, user names, passwords, and Web service addresses, which depend on the environment. The operating department might keep a few secrets with respect to production database passwords and payment provider accounts. We need a way to switch easily and automatically between environments. That's where a configuration management policy comes in.  
 
