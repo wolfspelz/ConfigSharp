@@ -42,7 +42,7 @@ namespace ConfigSharp
 
         public string Load(string fileName)
         {
-            string code = "";
+            string code;
 
             if (fileName.StartsWith("http://") || fileName.StartsWith("https://")) {
                 code = LoadHttp(fileName);
@@ -97,7 +97,7 @@ namespace ConfigSharp
                     throw new Exception("No response stream");
                 }
                 var sr = new StreamReader(stream, encoding: Encoding.UTF8);
-                code = sr.ReadToEndAsync().Result;
+                code = sr.ReadToEnd();
             } catch (Exception ex) {
                 Log.Error(ex.Message + "(" + url + ")");
             }

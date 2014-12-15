@@ -35,6 +35,21 @@ namespace UnitTests
             public string Message { get; set; }
         }
 
+        public void DummyAvoidReSharperWaring()
+        {
+            var config = new TestConfig();
+            config.IntMember = -1;
+            config.DateTimeMember = DateTime.Now;
+            config.StringMember = "xx";
+            config.ExecuteCodeWithReferenceResult = "xx";
+            var intProperty = config.IntProperty;
+            var stringProperty = config.StringProperty;
+            var dateTimeProperty = config.DateTimeProperty;
+            config.IntProperty = intProperty;
+            config.StringProperty = stringProperty;
+            config.DateTimeProperty = dateTimeProperty;
+        }
+
         // ----------------------------------------------------------------------
 
         [TestMethod]
@@ -370,11 +385,11 @@ namespace UnitTests
             string fileName = Path.GetTempPath() + "ConfigSharp-UnitTest-LogLoad.cs";
             File.WriteAllText(fileName, code);
             var logs = new List<TestLogLine>();
-            ConfigSharp.Global.Logger((logLevel, logMessage) => logs.Add(new TestLogLine { Level = logLevel, Message = logMessage }));
+            Global.Logger((logLevel, logMessage) => logs.Add(new TestLogLine { Level = logLevel, Message = logMessage }));
             var config = new TestConfig();
 
             // Act
-            var loadedCode = config.Load(fileName);
+            config.Load(fileName);
 
             // Assert
             Assert.AreEqual("Info", logs[0].Level);

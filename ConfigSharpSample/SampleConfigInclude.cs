@@ -2,7 +2,7 @@
 {
     class SampleConfigInclude
     {
-        public static void Run(ConfigSharpSample.MyConfigObject config)
+        public static void Run(MyConfigObject config)
         {
             config.TestProperty = "By SampleConfigInclude";
         }
