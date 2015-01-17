@@ -11,6 +11,8 @@ using Roslyn.Compilers.CSharp;
 
 namespace ConfigSharp
 {
+    using System.Linq;
+
     public class Container
     {
         public int Get(string sKey, int defaultValue) { return this.GetMemberValue(sKey, defaultValue); }
@@ -128,9 +130,25 @@ namespace ConfigSharp
                     var loadedAssembly = Assembly.Load(compiledAssembly);
                     var assemblyTypes = loadedAssembly.GetTypes();
                     foreach (var type in assemblyTypes) {
-                        var members = type.GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static);
-                        foreach (var member in members) {
-                            type.InvokeMember(member.Name, BindingFlags.Default | BindingFlags.InvokeMethod, null, null, new object[] { this });
+                        try
+                        {
+                            var members = type.GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static);
+                            foreach (var member in members)
+                            {
+                                type.InvokeMember(member.Name, BindingFlags.Default | BindingFlags.InvokeMethod, null, null, new object[] { this });
+                            }
+                            var loadMethod = type.GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance).FirstOrDefault(m => m.Name == "Load");
+                            if (loadMethod != null)
+                            {
+                                var cfgObject = (dynamic)Activator.CreateInstance(type);
+                                CopyValues(this, cfgObject);
+                                type.InvokeMember(loadMethod.Name, BindingFlags.InvokeMethod, null, cfgObject, new object[] { });
+                                CopyValues(cfgObject, this);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(CurrentFile + " Exception: " + ex.Message);
                         }
                     }
                 } else {
@@ -139,6 +157,28 @@ namespace ConfigSharp
                         Log.Error(diagnostic.ToString());
                     }
                 }
+            }
+        }
+
+        private static void CopyValues(object fromObj, object toObj)
+        {
+            var fromType = fromObj.GetType();
+            var toType = toObj.GetType();
+
+            foreach (var propertyInfo in fromType.GetProperties())
+            {
+                var targetProp = toType.GetProperty(propertyInfo.Name);
+                if (targetProp == null) continue;
+
+                targetProp.SetValue(toObj, propertyInfo.GetValue(fromObj));
+            }
+
+            foreach (var fieldInfo in fromType.GetFields())
+            {
+                var targetField = toType.GetField(fieldInfo.Name);
+                if (targetField == null) continue;
+
+                targetField.SetValue(toObj, fieldInfo.GetValue(fromObj));
             }
         }
 
