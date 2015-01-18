@@ -171,6 +171,32 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void ExecuteLoadOnDerivedClass()
+        {
+            // Arrange
+            const string code =
+@"
+namespace UnitTests
+{
+    public class ExecuteCodeConfigFile : UnitTests.TestContainer.TestConfig
+    {
+        public void Load()
+        {
+            IntMember = 42;
+        }
+    }
+}
+";
+            var config = new TestConfig { IntMember = 41 };
+
+            // Act
+            config.Execute(code, new List<string>());
+
+            // Assert
+            Assert.AreEqual(42, config.IntMember);
+        }
+
+        [TestMethod]
         public void ExecuteCodeWithReference()
         {
             // Arrange
