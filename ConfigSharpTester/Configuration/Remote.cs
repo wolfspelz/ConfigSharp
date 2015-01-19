@@ -4,11 +4,11 @@ using System;
 
 namespace ConfigSharpTester.Configuration
 {
-    class Remote
+    class Remote : ConfigSharpTester.MyConfig
     {
-        public static void Run(ConfigSharpTester.MyConfig config)
+        public void Load()
         {
-            config.PropertyFromHttpInclude = "Remote value from " + new Uri(config.CurrentFile).PathAndQuery;
+            PropertyFromHttpInclude = "Remote value from " + new Uri(CurrentFile).PathAndQuery;
         }
     }
 }
