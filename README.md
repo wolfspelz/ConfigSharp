@@ -13,9 +13,9 @@ Devops friendly, because admins can *program* their config files. Developers can
 
 You have a config class which contains your app settings. An instance is populated by loading/executing C# based config files. You can then use properties of the config object anywhere in your app. 
 
-### *** Breaking change in version 1.0.7: Config file format changed ***
+### * Breaking change in version 1.0.7: File format changed *
 
-The class in your config file must derive from your config class and only the Load() method is loaded. This allows for local methods in config files and we can omit the argument of the config method in config files. 
+The class in your config file must now derive from your config class and only the Load() method is loaded. This allows for local methods in config files and we can omit the argument of the config method in config files. 
 
 Use the old format with:
 
