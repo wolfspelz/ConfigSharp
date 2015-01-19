@@ -1,10 +1,10 @@
 namespace ConfigSharpTester.Configuration
 {
-    class Production
+    class Production : ConfigSharpTester.MyConfig
     {
-        public static void Run(ConfigSharpTester.MyConfig config)
+        public void Load()
         {
-            config.IntFromProductionCs = 44;
+            IntFromProductionCs = 44;
         }
     }
 }

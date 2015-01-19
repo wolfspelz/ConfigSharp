@@ -9,6 +9,14 @@ No more key-value lists of string based app settings from XML. These settings ar
 
 Devops friendly, because admins can *program* their config files. Developers can document settings with examples in *their own code*, which is also the *admins's config file*. 
 
+### Breaking change in version 1.0.7
+
+Config file format changed. Use the previous format with:
+
+    var config = new MyConfig { LoadAllStaticMembers = true };
+    
+(Judging from 26 nuget downloads, it is no heavily in use, so I made the change breaking by defaulting to the new file format. I promise, that this will be the last breaking change.)
+
 ### 1. What it does
 
 You have a config class which contains your app settings. An instance is populated by loading/executing C# based config files. You can then use properties of the config object anywhere in your app. 
@@ -42,17 +50,17 @@ ConfigFile.cs:
 
     namespace MyProgram.Configuration // any namespace
     {
-        class ConfigFile // Any class name
+        class ConfigFile : MyProgram.MyConfig // Any class name derived from your config class
         {
-            public static void Run(MyProgram.MyConfig config) // Any method name
+            public void Load()
             {
-                config.SomeProperty = "42";
-                config.Include("OtherConfigFile.cs");
+                SomeProperty = "42";
+                Include("OtherConfigFile.cs");
             }
         }
     }
 
-ConfigSharp will execute all public methods of all public classes of any namespace in a config file. 
+ConfigSharp will execute the Load() method. 
 
 ### 3. Using config properties
 
@@ -121,15 +129,15 @@ Example (first call in the production environment):
     // or
     config.Include(@"D:\MyApp\ConfigFile.cs");
 
-Example (inside config file relative to parent):
+Example (inside config file relative to parent but no "config" instance, because "this" is the instance):
 
-    config.Include("AdditionalConfigFile.cs");
+    Include("AdditionalConfigFile.cs");
 
 #### 4.2 HTTP remote include
 
-The config.Include() method also digests http:// and https:// URLs. Example:
+The Include() method also digests http:// and https:// URLs. Example:
 
-    config.Include("https://my.config.server/MyApp/Configuration");
+    Include("https://my.config.server/MyApp/Configuration");
 
 ### 5. Additional assemblies
 
@@ -150,11 +158,11 @@ Example config file:
     //reference "System.UriBuilder, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
     namespace MyProgram.Configuration
     {
-        class ConfigFile
+        class ConfigFile : MyProgram.MyConfig
         {
-            public static void Run(MyProgram.MyConfig config)
+            public void Load()
             {
-                config.HomePageUrl = new UriBuilder("http", "blog.wolfspelz.de");
+                HomePageUrl = new UriBuilder("http", "blog.wolfspelz.de");
             }
         }
     }
@@ -166,7 +174,6 @@ Remark: unfortunately, the *#r* notation of C#-Script is not possible, because t
 Many libraries are opinionated. They require you to do things in certain ways. ConfigSharp has a very small API and it gives a lot of freedom with respect to naming and policies. Here are the things you can change:
 - namespace in config files
 - class names in config files
-- method names in config files
 - config object class name, e.g. MyConfig
 - property names (of course)
 - C# properties or memeber variables with initialization
@@ -203,25 +210,25 @@ Root.cs:
 
     namespace MyProgram.Configuration
     {
-      class Root
+      class Root : MyProgram.MyConfig
       {
-        public static void Run(MyProgram.MyConfig config)
+        public void Load()
         {
             // Initialize all settings
             // This is a kind of config reference, which lists all settings with examples
             // especially for admins who do not check the source code, but read/write config files
-            config.SomeProperty = "http://localhost:8080/";
-            config.OrAsMemberVariable = 42;
-            config.OrPlainOldCLRTypes = DateTime.Now;
-            config.DatabasePassword = "-empty-";
+            SomeProperty = "http://localhost:8080/";
+            OrAsMemberVariable = 42;
+            OrPlainOldCLRTypes = DateTime.Now;
+            DatabasePassword = "-empty-";
 
             // Setup.cs just sets SetupName
-            config.Include("Setup.cs");
+            Include("Setup.cs");
             
             // Overwrite settings for the environment
-            switch (config.SetupName) {
-                case "Debug": config.Include("Debug.cs"); break;
-                case "Production": config.Include("Production.cs"); break;
+            switch (SetupName) {
+                case "Debug": Include("Debug.cs"); break;
+                case "Production": Include("Production.cs"); break;
             }
         }
       }
@@ -231,13 +238,13 @@ Setup.cs (of a production/live system):
 
     namespace MyProgram.Configuration
     {
-      class Setup
+      class Setup : MyProgram.MyConfig
       {
-        public static void Run(MyProgram.MyConfig config)
+        public void Load()
         {
-            //config.SetupName == "Debug") { 
-            //config.SetupName == "Build") { 
-            config.SetupName == "Production") { 
+            //SetupName == "Debug") { 
+            //SetupName == "Build") { 
+            SetupName == "Production") { 
         }
       }
     }
@@ -246,11 +253,11 @@ Production.cs:
 
     namespace MyProgram.Configuration
     {
-      class Production
+      class Production : MyProgram.MyConfig
       {
-        public static void Run(MyProgram.MyConfig config)
+        public void Load()
         {
-            config.DatabasePassword = "jDf2o3Gzdt6iZk"; // Real production DB password
+            DatabasePassword = "jDf2o3Gzdt6iZk"; // Real production DB password
         }
       }
     }

@@ -1,10 +1,10 @@
 namespace ConfigSharpTester.Configuration
 {
-    class Setup
+    class Setup : ConfigSharpTester.MyConfig
     {
-        public static void Run(ConfigSharpTester.MyConfig config)
+        public void Load()
         {
-            config.SetupName = "Production";
+            SetupName = "Production";
         }
     }
 }

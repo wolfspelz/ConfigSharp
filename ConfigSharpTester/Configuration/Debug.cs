@@ -1,10 +1,10 @@
 namespace ConfigSharpTester.Configuration
 {
-    class Debug
+    class Debug : ConfigSharpTester.MyConfig
     {
-        public static void Run(ConfigSharpTester.MyConfig config)
+        public void Load()
         {
-            config.IntFromDebugCs = 44;
+            IntFromDebugCs = 44;
         }
     }
 }

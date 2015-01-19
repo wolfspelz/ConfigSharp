@@ -4,7 +4,7 @@ namespace ConfigSharpSample
 {
     public class MyConfigObject : ConfigSharp.Container
     {
-        public string TestProperty = "Initial value";
+        public string TestProperty = "Initial";
     }
 
     // This helper makes the Config.Global.MyProperty syntax available
@@ -22,19 +22,19 @@ namespace ConfigSharpSample
             { 
                 // This is all you need
                 ConfigSharp.Global.Instance = new MyConfigObject();
-                ConfigSharp.Global.Instance.Include("../../SampleConfigFile.cs"); // Load config
-                Console.WriteLine("Config.Global.TestProperty = " + Config.Global.TestProperty); // Use config
+                ConfigSharp.Global.Instance.Include("../../SampleConfig.cs"); // Load config
+                Console.WriteLine("Config.Global.TestProperty= " + Config.Global.TestProperty); // Use config
                 // done
 
                 
                 // The same via getter with default
-                Console.WriteLine(@"Config.Global.Get(""TestProperty"") = " + Config.Get("TestProperty", "default"));
+                Console.WriteLine(@"Config.Global.Get(TestProperty)= " + Config.Get("TestProperty", "default"));
             }
 
             {
                 // Using just a local variable as config object without the Config.Global option
                 var config = new MyConfigObject();
-                config.Include("../../SampleConfigFile.cs");
+                config.Include("../../SampleConfig.cs");
                 Console.WriteLine("config.TestProperty = " + config.TestProperty);
             }
 

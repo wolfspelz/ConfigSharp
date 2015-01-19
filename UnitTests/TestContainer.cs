@@ -35,7 +35,7 @@ namespace UnitTests
             public string Message { get; set; }
         }
 
-        public void DummyAvoidReSharperWaring()
+        public void DummyAvoidReSharperWarning()
         {
             var config = new TestConfig();
             config.IntMember = -1;
@@ -60,11 +60,11 @@ namespace UnitTests
 @"
 namespace UnitTests
 {
-    class LoadCodeFromAbsolutePathConfigFile
+    class LoadCodeFromAbsolutePathConfigFile : UnitTests.TestContainer.TestConfig
     {
-        public static void Run(UnitTests.TestContainer.TestConfig config)
+        public void Load()
         {
-            config.IntMember = 42;
+            IntMember = 42;
         }
     }
 }
@@ -88,11 +88,11 @@ namespace UnitTests
 @"
 namespace UnitTests
 {
-    class LoadCodeFromRelativePathConfigFile
+    class LoadCodeFromRelativePathConfigFile : UnitTests.TestContainer.TestConfig
     {
-        public static void Run(UnitTests.TestContainer.TestConfig config)
+        public void Load()
         {
-            config.IntMember = 42;
+            IntMember = 42;
         }
     }
 }
@@ -124,11 +124,11 @@ namespace UnitTests
 
 namespace UnitTests
 {
-    class ExecuteCodeConfigFile
+    class ExecuteCodeConfigFile : UnitTests.TestContainer.TestConfig
     {
-        public static void Run(UnitTests.TestContainer.TestConfig config)
+        public void Load()
         {
-            config.IntMember = 42;
+            IntMember = 42;
         }
     }
 }
@@ -152,33 +152,7 @@ namespace UnitTests
 @"
 namespace UnitTests
 {
-    class ExecuteCodeConfigFile
-    {
-        public static void Run(UnitTests.TestContainer.TestConfig config)
-        {
-            config.IntMember = 42;
-        }
-    }
-}
-";
-            var config = new TestConfig { IntMember = 41 };
-
-            // Act
-            config.Execute(code, new List<string>());
-
-            // Assert
-            Assert.AreEqual(42, config.IntMember);
-        }
-
-        [TestMethod]
-        public void ExecuteLoadOnDerivedClass()
-        {
-            // Arrange
-            const string code =
-@"
-namespace UnitTests
-{
-    public class ExecuteCodeConfigFile : UnitTests.TestContainer.TestConfig
+    class ExecuteCodeConfigFile : UnitTests.TestContainer.TestConfig
     {
         public void Load()
         {
@@ -197,6 +171,60 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void ExecuteLoadAllStaticMembersBackwardCompatibility()
+        {
+            // Arrange
+            const string code =
+@"
+namespace UnitTests
+{
+    public class ExecuteLoadAllStaticMembersBackwardCompatibilityConfigFile
+    {
+        public static void AnyStaticMemberName(UnitTests.TestContainer.TestConfig config)
+        {
+            config.IntMember = 42;
+        }
+    }
+}
+";
+#pragma warning disable 0618
+            var config = new TestConfig { IntMember = 41, LoadAllStaticMembers = true };
+#pragma warning restore 0618
+
+            // Act
+            config.Execute(code, new List<string>());
+
+            // Assert
+            Assert.AreEqual(42, config.IntMember);
+        }
+
+        [TestMethod]
+        public void ExecuteLoadAllStaticMembersDefaultNoBackwardCompatibility()
+        {
+            // Arrange
+            const string code =
+@"
+namespace UnitTests
+{
+    public class ExecuteLoadAllStaticMembersDefaultNoBackwardCompatibilityConfigFile
+    {
+        public static void AnyStaticMemberName(UnitTests.TestContainer.TestConfig config)
+        {
+            config.IntMember = 42;
+        }
+    }
+}
+";
+            var config = new TestConfig { IntMember = 41 };
+
+            // Act
+            config.Execute(code, new List<string>());
+
+            // Assert
+            Assert.AreEqual(41, config.IntMember);
+        }
+
+        [TestMethod]
         public void ExecuteCodeWithReference()
         {
             // Arrange
@@ -205,12 +233,12 @@ namespace UnitTests
 using System;
 namespace UnitTests
 {
-    class ExecuteCodeWithReferenceConfigFile
+    class ExecuteCodeWithReferenceConfigFile : UnitTests.TestContainer.TestConfig
     {
-        public static void Run(UnitTests.TestContainer.TestConfig config)
+        public void Load()
         {
             var ub = new UriBuilder(""http"", ""blog.wolfspelz.de"");
-            config.ExecuteCodeWithReferenceResult = ub.ToString();
+            ExecuteCodeWithReferenceResult = ub.ToString();
         }
     }
 }
@@ -278,11 +306,11 @@ namespace UnitTests
                 return @"
 namespace UnitTests
 {
-    class ExecuteCodeWithIncludeConfigFile2
+    class ExecuteCodeWithIncludeConfigFile2 : UnitTests.TestContainer.TestConfig
     {
-        public static void Run(UnitTests.TestContainer.TestConfig config)
+        public void Load()
         {
-            config.IntMember = 42;
+            IntMember = 42;
         }
     }
 }
@@ -297,11 +325,11 @@ namespace UnitTests
 @"
 namespace UnitTests
 {
-    class ExecuteCodeWithIncludeConfigFile
+    class ExecuteCodeWithIncludeConfigFile : UnitTests.TestContainer.TestConfig
     {
-        public static void Run(UnitTests.TestContainer.TestConfig config)
+        public void Load()
         {
-            config.Include(""ExecuteCodeWithIncludeConfigFile2.cs"");
+            Include(""ExecuteCodeWithIncludeConfigFile2.cs"");
         }
     }
 }
@@ -324,11 +352,11 @@ namespace UnitTests
 @"
 namespace UnitTests
 {
-    class LoadRelativeConfigFile
+    class LoadRelativeConfigFile : UnitTests.TestContainer.TestConfig
     {
-        public static void Run(UnitTests.TestContainer.TestConfig config)
+        public void Load()
         {
-            config.Include(""ExecuteCodeWithIncludeConfigFile2.cs"");
+            Include(""ExecuteCodeWithIncludeConfigFile2.cs"");
         }
     }
 }
@@ -337,11 +365,11 @@ namespace UnitTests
 @"
 namespace UnitTests
 {
-    class LoadRelativeConfigFile2
+    class LoadRelativeConfigFile2 : UnitTests.TestContainer.TestConfig
     {
-        public static void Run(UnitTests.TestContainer.TestConfig config)
+        public void Load()
         {
-            config.IntMember = 42;
+            IntMember = 42;
         }
     }
 }
@@ -399,11 +427,11 @@ namespace UnitTests
 @"
 namespace UnitTests
 {
-    class LogLoadConfigFile
+    class LogLoadConfigFile : UnitTests.TestContainer.TestConfig
     {
-        public static void Run(UnitTests.TestContainer.TestConfig config)
+        public void Load()
         {
-            config.IntMember = 42;
+            IntMember = 42;
         }
     }
 }
@@ -444,11 +472,11 @@ namespace UnitTests
                 const string body = @"
 namespace UnitTests
 {
-    class ExecuteCodeWithHttpIncludeConfigFile2
+    class ExecuteCodeWithHttpIncludeConfigFile2 : UnitTests.TestContainer.TestConfig
     {
-        public static void Run(UnitTests.TestContainer.TestConfig config)
+        public void Load()
         {
-            config.IntMember = 42;
+            IntMember = 42;
         }
     }
 }
@@ -464,11 +492,11 @@ namespace UnitTests
 @"
 namespace UnitTests
 {
-    class ExecuteCodeWithHttpIncludeConfigFile
+    class ExecuteCodeWithHttpIncludeConfigFile : UnitTests.TestContainer.TestConfig
     {
-        public static void Run(UnitTests.TestContainer.TestConfig config)
+        public void Load()
         {
-            config.Include(""http://localhost:19377"");
+            Include(""http://localhost:19377"");
         }
     }
 }

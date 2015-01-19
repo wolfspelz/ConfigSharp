@@ -22,11 +22,14 @@ namespace ConfigSharp
         public bool Get(string sKey, bool defaultValue) { return this.GetMemberValue(sKey, defaultValue); }
         public T Get<T>(string sKey) { return (T)this.GetMemberValue(sKey); }
 
-        private ILoader Loader { get; set; }
+        public ILoader Loader { get; set; } // public so that CopyValues copies it
         public Container Use(ILoader loader) { Loader = loader; return this; }
 
         public string BaseFolder { get; set; }
         public string CurrentFile { get; protected set; }
+
+        [Obsolete("Loading all members of all classes is still supported, but must be activated. The feature will be removed later.")]
+        public bool LoadAllStaticMembers = false;
 
         public Container Include(string fileName)
         {
@@ -113,14 +116,27 @@ namespace ConfigSharp
 
             var compilation = Compilation.Create("ConfigSnippet", new CompilationOptions(OutputKind.DynamicallyLinkedLibrary))
                 .AddSyntaxTrees(syntaxTree)
-                .AddReferences(new MetadataFileReference(GetType().Assembly.Location))
-                .AddReferences(new MetadataFileReference(typeof(object).Assembly.Location)) // mscorelib
-                .AddReferences(new MetadataFileReference(typeof(Container).Assembly.Location))
-                //.AddReferences(new MetadataFileReference(typeof(Uri).Assembly.Location)) // System.dll
                 ;
 
-            foreach (var sReference in references) {
-                compilation = compilation.AddReferences(new MetadataFileReference(sReference));
+            var refList = references.ToList();
+            refList.Insert(0, typeof(Uri).Assembly.Location); // System.dll
+            refList.Insert(0, typeof(Container).Assembly.Location); // ConfigSharp.dll
+            refList.Insert(0, typeof(object).Assembly.Location); // mscorelib
+
+            // Adding the application dll is a bit iffy
+            var baseType = GetType().BaseType;
+            var typeAssembly = GetType().Assembly;
+            var appLocation = typeAssembly.Location;
+            if (string.IsNullOrEmpty(appLocation) && baseType != null) {
+                var baseTypeAssembly = baseType.Assembly;
+                appLocation = baseTypeAssembly.Location;
+            }
+            refList.Insert(0, appLocation);
+
+            foreach (var sRef in refList) {
+                //if (!string.IsNullOrEmpty(sRef)) {
+                compilation = compilation.AddReferences(new MetadataFileReference(sRef));
+                //}
             }
 
             using (var assemblyStream = new MemoryStream()) {
@@ -130,24 +146,26 @@ namespace ConfigSharp
                     var loadedAssembly = Assembly.Load(compiledAssembly);
                     var assemblyTypes = loadedAssembly.GetTypes();
                     foreach (var type in assemblyTypes) {
-                        try
-                        {
-                            var members = type.GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static);
-                            foreach (var member in members)
-                            {
-                                type.InvokeMember(member.Name, BindingFlags.Default | BindingFlags.InvokeMethod, null, null, new object[] { this });
-                            }
+                        try {
                             var loadMethod = type.GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance).FirstOrDefault(m => m.Name == "Load");
-                            if (loadMethod != null)
-                            {
+                            if (loadMethod != null) {
+                                // If there is a Load() methid then load it
                                 var cfgObject = (dynamic)Activator.CreateInstance(type);
                                 CopyValues(this, cfgObject);
                                 type.InvokeMember(loadMethod.Name, BindingFlags.InvokeMethod, null, cfgObject, new object[] { });
                                 CopyValues(cfgObject, this);
+                            } else {
+#pragma warning disable 0618
+                                if (LoadAllStaticMembers) {
+#pragma warning restore 0618
+                                    // Otherwise load all static members (backward compatibility)
+                                    var members = type.GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static);
+                                    foreach (var member in members) {
+                                        type.InvokeMember(member.Name, BindingFlags.Default | BindingFlags.InvokeMethod, null, null, new object[] { this });
+                                    }
+                                }
                             }
-                        }
-                        catch (Exception ex)
-                        {
+                        } catch (Exception ex) {
                             Log.Error(CurrentFile + " Exception: " + ex.Message);
                         }
                     }
@@ -165,16 +183,14 @@ namespace ConfigSharp
             var fromType = fromObj.GetType();
             var toType = toObj.GetType();
 
-            foreach (var propertyInfo in fromType.GetProperties())
-            {
+            foreach (var propertyInfo in fromType.GetProperties()) {
                 var targetProp = toType.GetProperty(propertyInfo.Name);
                 if (targetProp == null) continue;
 
                 targetProp.SetValue(toObj, propertyInfo.GetValue(fromObj));
             }
 
-            foreach (var fieldInfo in fromType.GetFields())
-            {
+            foreach (var fieldInfo in fromType.GetFields()) {
                 var targetField = toType.GetField(fieldInfo.Name);
                 if (targetField == null) continue;
 

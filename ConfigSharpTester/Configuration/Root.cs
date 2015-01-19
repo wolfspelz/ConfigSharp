@@ -5,23 +5,23 @@ using System;
 
 namespace ConfigSharpTester.Configuration
 {
-    class Root
+    class Root : ConfigSharpTester.MyConfig
     {
-        public static void Run(ConfigSharpTester.MyConfig config)
+        public void Load()
         {
-            //config.Include("https://raw.githubusercontent.com/wolfspelz/ConfigSharp/master/ConfigSharpTester/Configuration/Remote.cs");
+            Include("https://raw.githubusercontent.com/wolfspelz/ConfigSharp/master/ConfigSharpTester/Configuration/Remote.cs");
             var ub = new UriBuilder("http", "blog.wolfspelz.de");
-            config.UriBuilderResult = ub.ToString();
+            UriBuilderResult = ub.ToString();
 
-            config.Include("Setup.cs");
-            config.IntPropertyFromRootCs = 42;
-            config.StringMemberFromRootCs = "Local value from Root.cs";
-            config.DateTimeProperty = DateTime.Now;
+            Include("Setup.cs");
+            IntPropertyFromRootCs = 42;
+            StringMemberFromRootCs = "Local value from Root.cs";
+            DateTimeProperty = DateTime.Now;
             
-            if (config.SetupName == "Debug") { 
-                config.Include("Debug.cs");
-            } else if (config.SetupName == "Production") {
-                config.Include("Production.cs");
+            if (SetupName == "Debug") { 
+                Include("Debug.cs");
+            } else if (SetupName == "Production") {
+                Include("Production.cs");
             }
 
         }

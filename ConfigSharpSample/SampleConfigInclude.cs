@@ -1,10 +1,10 @@
 ﻿namespace ConfigSharpSample
 {
-    class SampleConfigInclude
+    class SampleConfigInclude : MyConfigObject
     {
-        public static void Run(MyConfigObject config)
+        public void Load()
         {
-            config.TestProperty = "By SampleConfigInclude";
+            TestProperty += " + SampleConfigInclude";
         }
     }
 }
