@@ -1,11 +1,11 @@
 ﻿namespace ConfigSharpSample
 {
-    class SampleConfigFile
+    class SampleConfigFile : ConfigSharpSample.MyConfigObject
     {
-        public static void Run(MyConfigObject config)
+        public void Load()
         {
-            config.TestProperty = "By SampleConfigFile";
-            config.Include("SampleConfigInclude.cs");
+            TestProperty += " + SampleConfigFile";
+            Include("SampleConfigInclude.cs");
         }
     }
 }
