@@ -7,7 +7,9 @@ Write real code with control structures and classes in config files. Include oth
 
 No more key-value lists of string based app settings from XML. These settings are typed properties of CLR objects, even aggregated types. No more workarounds for complex settings, which do not fit properly in strings. 
 
-Devops friendly, because admins can *program* their config files. Developers can document settings with examples in *their own code*, which is also the *admins's config file*. 
+Devops friendly, because admins can *program* their config files. Developers can document settings with examples in *their own code*, which is also the *admins's config file*.
+
+**nuget download: https://www.nuget.org/packages/ConfigSharp/**
 
 ### 1. What it does
 
