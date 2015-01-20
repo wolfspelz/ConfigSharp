@@ -13,15 +13,15 @@ Devops friendly, because admins can *program* their config files. Developers can
 
 You have a config class which contains your app settings. An instance is populated by loading/executing C# based config files. You can then use properties of the config object anywhere in your app. 
 
-### * Breaking change in version 1.0.7: File format changed *
+### ** Breaking change in version 1.0.7: File format changed **
 
 The class in your config file must now derive from your config class and only the Load() method is loaded. This allows for local methods in config files and we can omit the argument of the config method in config files. 
 
-Use the old format with:
+You can continue use the old format with:
 
     var config = new MyConfig { LoadAllStaticMembers = true };
     
-(Judging from 26 nuget downloads, it is no heavily in use, so I made the change breaking by defaulting to the new file format. I promise, that this will be the last breaking change.)
+(Judging from 26 nuget downloads, it is not heavily in use, so I made the change breaking by defaulting to the new file format. I promise, that this will be the last breaking change.)
 
 ### 2. Examples
 
