@@ -15,12 +15,12 @@ namespace ConfigSharp
 
     public class Container
     {
-        public int Get(string sKey, int defaultValue) { return this.GetMemberValue(sKey, defaultValue); }
-        public string Get(string sKey, string defaultValue) { return this.GetMemberValue(sKey, defaultValue); }
-        public long Get(string sKey, long defaultValue) { return this.GetMemberValue(sKey, defaultValue); }
-        public double Get(string sKey, double defaultValue) { return this.GetMemberValue(sKey, defaultValue); }
-        public bool Get(string sKey, bool defaultValue) { return this.GetMemberValue(sKey, defaultValue); }
-        public T Get<T>(string sKey) { return (T)this.GetMemberValue(sKey); }
+        public int Get(string key, int defaultValue) { return this.GetMemberValue(key, defaultValue); }
+        public string Get(string key, string defaultValue) { return this.GetMemberValue(key, defaultValue); }
+        public long Get(string key, long defaultValue) { return this.GetMemberValue(key, defaultValue); }
+        public double Get(string key, double defaultValue) { return this.GetMemberValue(key, defaultValue); }
+        public bool Get(string key, bool defaultValue) { return this.GetMemberValue(key, defaultValue); }
+        public T Get<T>(string key) { return (T)this.GetMemberValue(key); }
 
         public ILoader Loader { get; set; } // public so that CopyValues copies it
         public Container Use(ILoader loader) { Loader = loader; return this; }
@@ -198,16 +198,16 @@ namespace ConfigSharp
             }
         }
 
-        public IEnumerable<string> GetReferences(string sCode)
+        public IEnumerable<string> GetReferences(string code)
         {
             var references = new List<string>();
 
-            var lines = sCode.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+            var lines = code.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
             foreach (var line in lines) {
                 if (line.StartsWith("//reference ")) {
                     var tokens = line.ParseCommandline();
                     if (tokens.Count != 2) {
-                        throw new Exception("//reference needs an argument");
+                        throw new Exception("//reference needs an argument (absolute path or AQN)");
                     }
                     var reference = tokens[1].Trim(new[] { '"' });
                     if (Path.IsPathRooted(reference)) {

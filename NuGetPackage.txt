@@ -1,5 +1,5 @@
 
 cd $(SolutionDir)\ConfigSharp
 ..\.nuget\nuget pack ConfigSharp.csproj
-..\.nuget\nuget push ConfigSharp.1.0.7.0.nupkg
+..\.nuget\nuget push ConfigSharp.1.0.8.0.nupkg
 

@@ -8,50 +8,50 @@ namespace ConfigSharp
         {
             var args = new List<string>();
 
-            bool bDone = false;
-            bool bInString = false;
-            string sToken = "";
-            int nPos = 0;
-            while (!bDone) {
-                bool bIsData = false;
-                switch (s[nPos]) {
+            bool done = false;
+            bool inString = false;
+            string token = "";
+            int pos = 0;
+            while (!done) {
+                bool isData = false;
+                switch (s[pos]) {
                     case '"':
-                        if (!bInString) {
-                            bInString = true;
+                        if (!inString) {
+                            inString = true;
                         } else {
-                            bInString = false;
+                            inString = false;
                         }
                         break;
                     case '\0':
-                        bDone = true;
+                        done = true;
                         break;
                     case ' ':
-                        if (bInString) {
-                            bIsData = true;
+                        if (inString) {
+                            isData = true;
                         } else {
-                            if (sToken != "") {
-                                args.Add(sToken);
-                                sToken = "";
+                            if (token != "") {
+                                args.Add(token);
+                                token = "";
                             }
                         }
                         break;
                     default:
-                        bIsData = true;
+                        isData = true;
                         break;
                 }
 
-                if (!bDone) {
-                    if (bIsData) {
-                        sToken += s[nPos];
+                if (!done) {
+                    if (isData) {
+                        token += s[pos];
                     }
-                    nPos++;
-                    bDone = (nPos >= s.Length);
+                    pos++;
+                    done = (pos >= s.Length);
                 }
             }
 
-            if (sToken != "") {
-                args.Add(sToken);
-                sToken = "";
+            if (token != "") {
+                args.Add(token);
+                token = "";
             }
 
             return args;

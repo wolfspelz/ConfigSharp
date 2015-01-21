@@ -2,23 +2,23 @@
 {
     public static class LibLogger
     {
-        public delegate void CallbackToApplication(string sLevel, string sMessage);
+        public delegate void CallbackToApplication(string level, string message);
     }
 
     internal static class Log
     {
-        internal static void Verbose(string sMessage) { _Log("Verbose", sMessage); }
-        internal static void Info(string sMessage) { _Log("Info", sMessage); }
-        internal static void Warning(string sMessage) { _Log("Warning", sMessage); }
-        internal static void Error(string sMessage) { _Log("Error", sMessage); }
+        internal static void Verbose(string message) { _Log("Verbose", message); }
+        internal static void Info(string message) { _Log("Info", message); }
+        internal static void Warning(string message) { _Log("Warning", message); }
+        internal static void Error(string message) { _Log("Error", message); }
 
         private static LibLogger.CallbackToApplication _app;
         public static void SetLogger(LibLogger.CallbackToApplication app) { _app = app; }
 
-        private static void _Log(string sLevel, string sMessage)
+        private static void _Log(string level, string message)
         {
             if (_app != null) {
-                _app(sLevel, sMessage);
+                _app(level, message);
             }
         }
 

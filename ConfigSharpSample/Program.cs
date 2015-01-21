@@ -12,7 +12,7 @@ namespace ConfigSharpSample
     public class Config : ConfigSharp.Global
     {
         public static MyConfigObject Global { get { return (MyConfigObject)ConfigSharp.Global.Instance; } }
-        public static string Get(string sKey, string defaultValue) { return ConfigSharp.Global.Instance.Get(sKey, defaultValue); }
+        public static string Get(string key, string defaultValue) { return ConfigSharp.Global.Instance.Get(key, defaultValue); }
     }
 
     class Program

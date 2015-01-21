@@ -5,11 +5,11 @@ namespace ConfigSharp
 {
     public static class PropValueExtension
     {
-        public static Object GetMemberValue(this Object obj, String name)
+        public static object GetMemberValue(this Object obj, string name)
         {
             if (obj == null) { return null; }
 
-            foreach (String part in name.Split('.')) {
+            foreach (string part in name.Split('.')) {
 
                 Type type = obj.GetType();
                 PropertyInfo pi = type.GetProperty(part);
@@ -29,9 +29,9 @@ namespace ConfigSharp
             return obj;
         }
 
-        public static T GetMemberValue<T>(this Object obj, String name, T defaultValue)
+        public static T GetMemberValue<T>(this object obj, string name, T defaultValue)
         {
-            Object value = GetMemberValue(obj, name);
+            object value = GetMemberValue(obj, name);
             if (value == null) {
                 return defaultValue;
             }
