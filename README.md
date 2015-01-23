@@ -25,7 +25,7 @@ You can continue use the old format with:
     
 (Judging from 26 nuget downloads, it is not heavily in use, so I made the change breaking by defaulting to the new file format. I promise, that this will be the last breaking change.)
 
-### 2. Examples
+### 2. Example
 
 Program.cs:
 
@@ -35,10 +35,6 @@ Program.cs:
         config.Include("ConfigFile.cs");
         ...
         var prop1 = config.SomeProperty;
-        // or
-        var prop2 = Config.Global.SomeProperty;
-        var prop3 = App.Settings.SomeProperty;
-        var prop4 = AppSettings.Get("SomeProperty", "default");
     }
 
     public class MyConfig : ConfigSharp.Container
@@ -66,7 +62,68 @@ ConfigFile.cs:
 
 ConfigSharp will execute the Load() method. 
 
-### 3. Using config properties
+### 3. Typical Use Case
+
+#### 3.1 Global Accessor
+
+Usually you want a globally available config accessor, not just a variable like the *var config* above. ConfigSharp has a global instance which can be used. Also, depending on your environment, the location of the config file may need a path relative to the project or the binary. 
+
+    ConfigSharp.Global.Instance = new MyConfig();
+    ConfigSharp.Global.Instance.Include("bin/Configuration/ConfigFile.cs");
+    ...
+    var prop1 = ConfigSharp.Global.Instance.SomeProperty;
+
+#### 3.2 Global Wrapper
+
+Since I don't like the writing *ConfigSharp.Global.Instance* all the time, I shorten this by defining my own global wrapper:
+
+    public class Global
+    {
+        public static MyConfig Config { get { return (MyConfig)ConfigSharp.Global.Instance; } }
+    }
+
+Then I can use everywhere in my program:
+
+    var prop1 = Global.Config.ApplicationName;
+
+(Usually I add more *global* instances of other libraries to my global wrapper, like a logger.)
+
+You might also call it:
+
+    public class App
+    {
+        public static MyConfig Settings { get { return (MyConfig)ConfigSharp.Global.Instance; } }
+    }
+
+and use it like:
+
+    var prop1 = App.Settings.ApplicationName;
+
+#### 3.3 Copy Config Files to Output Directory
+
+The goal of ConfigSharp is to edit config files like code files. But config files will not be compiled into the application. They must be copied as files to the binaries. In the properties of all config files change *Copy to Output Directory* from *Do not copy* to *Copy if newer*.
+
+#### 3.4 Configuration Folder
+
+You might put all config files into a *Configuration* folder. The folder will appear in the output and all config files (if there are more than one) will be available in *bin/Configuration*.
+
+You might also put your config base class (*MyConfig.cs*) into the *Configuration* folder and also *Copy if newer* to the output folder. This might serve as a reference of available config parameters for devops. 
+
+Putting *MyConfig.cs* into the *Configuration* folder also allows to get rid of a namespace in config files. Config classes are derived from the base config (*MyConfig*) and they are siblings in the *Configuration* folder. ConfigFile.cs:
+
+    namespace MyProgram.Configuration // Named by the folder
+    {
+        class ConfigFile : MyConfig // Because the base config class is a sibling in the folder (=namespace)
+        {
+            public void Load()
+            {
+                SomeProperty = "42";
+                Include("OtherConfigFile.cs");
+            }
+        }
+    }
+
+### 4. Using Config Properties
 
 After loading the settings into the config object...
 
@@ -74,11 +131,11 @@ After loading the settings into the config object...
     
 ...you will use the properties. Your app settings / config properties / members of the config object can be accessed in different ways:
 
-#### 3.1 Properties of a config object instance
+#### 4.1 Properties of a config object instance
 
     var serverAddress = config.ServerAddress;
 
-#### 3.2 Properties of a global config object
+#### 4.2 Properties of a global config object
 
     var serverAddress = Config.Global.ServerAddress;
     // or:
@@ -95,7 +152,7 @@ Without this wrapper you'd use:
 
     var serverAddress = ConfigSharp.Global.Instance.ServerAddress;
 
-#### 3.3 Getter functions with string based property name and default value
+#### 4.3 Getter functions with string based property name and default value
 
     var serverAddress = Config.Global.Get("ServerAddress", "http://localhost:8080/");
     var maxSize = Config.Global.Get("MaxMessageSize", 100 * 1024 * 1024);
@@ -117,9 +174,9 @@ If you augment the your wrapper with a getter:
         return ConfigSharp.Global.Instance.Get(key, defaultValue);
     }
 
-### 4. Absolute and relative paths
+### 5. Absolute and Relative Paths
 
-#### 4.1 Local files
+#### 5.1 Local Files
 
 The first config.Include() must point to the include file *relative to the working directory* or must be an *absolute path*. Include()s inside config files will take file names relative to the first include file. The config object has a BaseFolder property. If it is set, then it is used a s a base for relative paths instead of the app's working directory.
 
@@ -137,13 +194,13 @@ Example (inside config file relative to parent but no "config" instance, because
 
     Include("AdditionalConfigFile.cs");
 
-#### 4.2 HTTP remote include
+#### 5.2 HTTP Remote Include
 
 The Include() method also digests http:// and https:// URLs. Example:
 
     Include("https://my.config.server/MyApp/Configuration");
 
-### 5. Additional assemblies
+### 6. Additional Assemblies
 
 Config Sharp addes references to mscorelib and System.dll. That's enough for property assignments. If your config class or your config file code needs additional types, then the assemblies have to be referenced in the config file. 
 
@@ -173,7 +230,7 @@ Example config file:
 
 Remark: unfortunately, the *#r* notation of C#-Script is not possible, because the code will be managed by Visual Studio, which will complain about an unknown preprocessor directive. Even *#pragma reference* gives a warning. 
 
-### 6. What you can change when using ConfigSharp
+### 7. What you can change when using ConfigSharp
 
 Many libraries are opinionated. They require you to do things in certain ways. ConfigSharp has a very small API and it gives a lot of freedom with respect to naming and policies. Here are the things you can change:
 - namespace in config files
@@ -185,7 +242,7 @@ Many libraries are opinionated. They require you to do things in certain ways. C
 - configuration management policy, because it is implemented by your config files
 - value of the BaseFolder property of the config object from inside the config file
 
-### 7. Configuration managament policy
+### 8. My Configuration Managament Policy
 
 When running in different environments (Debug, Build, Production), then you need different config files. There are debug only settings, user names, passwords, and Web service addresses, which depend on the environment. The operating department might keep a few secrets with respect to production database passwords and payment provider accounts. We need a way to switch easily and automatically between environments. That's where a configuration management policy comes in.  
 
