@@ -66,7 +66,7 @@ ConfigSharp will execute the Load() method.
 
 #### 3.1 Global Accessor
 
-Usually you want a globally available config accessor, not just a varialble like the *var config* above. ConfigSharp has a global instance which can be used. Also, depending on your environment, the location of the config file may need a path relative to the project or the binary. 
+Usually you want a globally available config accessor, not just a variable like the *var config* above. ConfigSharp has a global instance which can be used. Also, depending on your environment, the location of the config file may need a path relative to the project or the binary. 
 
     ConfigSharp.Global.Instance = new MyConfig();
     ConfigSharp.Global.Instance.Include("bin/Configuration/ConfigFile.cs");
@@ -86,7 +86,9 @@ Then I can use everywhere in my program:
 
     var prop1 = Global.Config.ApplicationName;
 
-Usually I add more *global* instances of other libraries to my global wrapper, like a logger. You might also call it:
+(Usually I add more *global* instances of other libraries to my global wrapper, like a logger.)
+
+You might also call it:
 
     public class App
     {
