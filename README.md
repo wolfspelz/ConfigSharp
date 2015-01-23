@@ -107,7 +107,21 @@ The goal of ConfigSharp is to edit config files like code files. But config file
 
 You might put all config files into a *Configuration* folder. The folder will appear in the output and all config files (if there are more than one) will be available in *bin/Configuration*.
 
-You might also put your config base class (*MyConfig*) into the *Configuration* folder and also *Copy if newer* to the output folder. This might serve as a reference of available config parameters for devops. 
+You might also put your config base class (*MyConfig.cs*) into the *Configuration* folder and also *Copy if newer* to the output folder. This might serve as a reference of available config parameters for devops. 
+
+Putting *MyConfig.cs* into the *Configuration* folder also allows to get rid of a namespace in config files. Config classes are derived from the base config (*MyConfig*) and they are siblings in the *Configuration* folder. ConfigFile.cs:
+
+    namespace MyProgram.Configuration // Named by the folder
+    {
+        class ConfigFile : MyConfig // Because the base config class is a sibling in the folder (=namespace)
+        {
+            public void Load()
+            {
+                SomeProperty = "42";
+                Include("OtherConfigFile.cs");
+            }
+        }
+    }
 
 ### 4. Using Config Properties
 
