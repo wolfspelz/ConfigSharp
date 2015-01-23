@@ -452,6 +452,36 @@ namespace UnitTests
             Assert.IsTrue(logs[1].Message.StartsWith("Read file:"));
         }
 
+        [TestMethod]
+        public void _Log()
+        {
+            // Arrange
+            const string code =
+@"
+namespace UnitTests
+{
+    class LogLoadConfigFile : UnitTests.TestContainer.TestConfig
+    {
+        public void Load()
+        {
+            _Log(""Message"");
+            IntMember = 42;
+        }
+    }
+}
+";
+            var logs = new List<TestLogLine>();
+            Global.Logger((logLevel, logMessage) => logs.Add(new TestLogLine { Level = logLevel, Message = logMessage }));
+            var config = new TestConfig();
+
+            // Act
+            config.Execute(code, new List<string>());
+
+            // Assert
+            Assert.AreEqual("Info", logs[0].Level);
+            Assert.IsTrue(logs[0].Message.StartsWith("Message"));
+        }
+
         public class Startup
         {
             public void Configuration(IAppBuilder appBuilder)

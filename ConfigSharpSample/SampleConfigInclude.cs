@@ -1,6 +1,6 @@
 ﻿namespace ConfigSharpSample
 {
-    class SampleConfigInclude : MyConfigObject
+    class SampleConfigInclude : MyConfig
     {
         public void Load()
         {

@@ -2,16 +2,15 @@
 
 namespace ConfigSharpSample
 {
-    public class MyConfigObject : ConfigSharp.Container
+    public class MyConfig : ConfigSharp.Container
     {
         public string TestProperty = "Initial";
     }
 
-    // This helper makes the Config.Global.MyProperty syntax available
-    // instead of ConfigSharp.Global.Instance.MyProperty 
-    public class Config : ConfigSharp.Global
+    // This helper makes the Global.Config.MyProperty syntax available instead of ConfigSharp.Global.Instance.MyProperty 
+    public class Global : ConfigSharp.Global
     {
-        public static MyConfigObject Global { get { return (MyConfigObject)ConfigSharp.Global.Instance; } }
+        public static MyConfig Config { get { return (MyConfig)ConfigSharp.Global.Instance; } }
         public static string Get(string key, string defaultValue) { return ConfigSharp.Global.Instance.Get(key, defaultValue); }
     }
 
@@ -21,21 +20,11 @@ namespace ConfigSharpSample
         {
             { 
                 // This is all you need
-                ConfigSharp.Global.Instance = new MyConfigObject();
-                ConfigSharp.Global.Instance.Include("../../SampleConfig.cs"); // Load config
-                Console.WriteLine("Config.Global.TestProperty= " + Config.Global.TestProperty); // Use config
-                // done
+                ConfigSharp.Global.Instance = new MyConfig().Include("../../SampleConfig.cs"); // Load config
+                Console.WriteLine("Global.Config.TestProperty = " + Global.Config.TestProperty); // Use config
 
-                
                 // The same via getter with default
-                Console.WriteLine(@"Config.Global.Get(TestProperty)= " + Config.Get("TestProperty", "default"));
-            }
-
-            {
-                // Using just a local variable as config object without the Config.Global option
-                var config = new MyConfigObject();
-                config.Include("../../SampleConfig.cs");
-                Console.WriteLine("config.TestProperty = " + config.TestProperty);
+                var testProperty = Global.Get("TestProperty", "default");
             }
 
             Console.WriteLine("");

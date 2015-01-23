@@ -31,6 +31,11 @@ namespace ConfigSharp
         [Obsolete("Loading all members of all classes is still supported, but must be activated. The feature will be removed later.")]
         public bool LoadAllStaticMembers = false;
 
+        public void _Log(string message)
+        {
+            Log.Info(message);
+        }
+
         public Container Include(string fileName)
         {
             string code = Loader == null ? Load(fileName) : Loader.Load(fileName);
@@ -185,14 +190,14 @@ namespace ConfigSharp
 
             foreach (var propertyInfo in fromType.GetProperties()) {
                 var targetProp = toType.GetProperty(propertyInfo.Name);
-                if (targetProp == null) continue;
+                if (targetProp == null) { continue; }
 
                 targetProp.SetValue(toObj, propertyInfo.GetValue(fromObj));
             }
 
             foreach (var fieldInfo in fromType.GetFields()) {
                 var targetField = toType.GetField(fieldInfo.Name);
-                if (targetField == null) continue;
+                if (targetField == null) { continue; }
 
                 targetField.SetValue(toObj, fieldInfo.GetValue(fromObj));
             }
