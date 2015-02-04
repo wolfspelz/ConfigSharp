@@ -9,7 +9,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>New</releaseNotes>
-    <projectUrl>https://code.google.com/p/json-tree/</projectUrl>
+    <projectUrl>https://github.com/wolfspelz/ConfigSharp</projectUrl>
     <copyright>Copyright 2014</copyright>
     <tags>Config Roslyn C# Script Scripting CLR Configuration File HTTP Remote</tags>
   </metadata>
