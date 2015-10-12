@@ -17,6 +17,22 @@ You have a config class which contains your app settings. An instance is populat
 
 ### 2. Example
 
+Your config file is C#: ConfigFile.cs:
+
+    namespace MyProgram.Configuration // any namespace
+    {
+        class ConfigFile : MyProgram.MyConfig // Any class name derived from your config class
+        {
+            public void Load()
+            {
+                SomeProperty = "42";
+                Include("OtherConfigFile.cs");
+            }
+        }
+    }
+
+ConfigSharp will execute the Load() method of your config file. 
+
 Your program: Program.cs:
 
     static void Main(string[] args)
@@ -36,22 +52,6 @@ Your program: Program.cs:
         public string SetupName { get; set; }
     }
     
-Your config file is C#: ConfigFile.cs:
-
-    namespace MyProgram.Configuration // any namespace
-    {
-        class ConfigFile : MyProgram.MyConfig // Any class name derived from your config class
-        {
-            public void Load()
-            {
-                SomeProperty = "42";
-                Include("OtherConfigFile.cs");
-            }
-        }
-    }
-
-ConfigSharp will execute the Load() method of your config file. 
-
 ### 3. Typical Use Case
 
 #### 3.1 Global Accessor
