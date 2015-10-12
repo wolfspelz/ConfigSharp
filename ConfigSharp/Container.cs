@@ -27,6 +27,7 @@ namespace ConfigSharp
 
         public string BaseFolder { get; set; }
         public string CurrentFile { get; protected set; }
+        public List<string> Functions = new List<string> { "Load" };
 
         [Obsolete("Loading all members of all classes is still supported, but must be activated. The feature will be removed later.")]
         public bool LoadAllStaticMembers = false;
@@ -152,9 +153,9 @@ namespace ConfigSharp
                     var assemblyTypes = loadedAssembly.GetTypes();
                     foreach (var type in assemblyTypes) {
                         try {
-                            var loadMethod = type.GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance).FirstOrDefault(m => m.Name == "Load");
+                            var loadMethod = type.GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance).FirstOrDefault(m => Functions.Contains(m.Name));
                             if (loadMethod != null) {
-                                // If there is a Load() methid then load it
+                                // If there is a Load() method then load it
                                 var cfgObject = (dynamic)Activator.CreateInstance(type);
                                 CopyValues(this, cfgObject);
                                 type.InvokeMember(loadMethod.Name, BindingFlags.InvokeMethod, null, cfgObject, new object[] { });

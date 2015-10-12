@@ -171,6 +171,32 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void ExecuteAlternativeFunctionName()
+        {
+            // Arrange
+            const string code =
+@"
+namespace UnitTests
+{
+    class ExecuteCodeConfigFile : UnitTests.TestContainer.TestConfig
+    {
+        public void NonStandardFunctionName()
+        {
+            IntMember = 42;
+        }
+    }
+}
+";
+            var config = new TestConfig { IntMember = 41, Functions = new List<string> { "NonStandardFunctionName" } };
+
+            // Act
+            config.Execute(code, new List<string>());
+
+            // Assert
+            Assert.AreEqual(42, config.IntMember);
+        }
+
+        [TestMethod]
         public void ExecuteLoadAllStaticMembersBackwardCompatibility()
         {
             // Arrange
