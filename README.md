@@ -17,7 +17,7 @@ You have a config class which contains your app settings. An instance is populat
 
 ### 2. Example
 
-Program.cs:
+Your program: Program.cs:
 
     static void Main(string[] args)
     {
@@ -36,7 +36,7 @@ Program.cs:
         public string SetupName { get; set; }
     }
     
-ConfigFile.cs:
+Your config file is C#: ConfigFile.cs:
 
     namespace MyProgram.Configuration // any namespace
     {
@@ -50,7 +50,7 @@ ConfigFile.cs:
         }
     }
 
-ConfigSharp will execute the Load() method. 
+ConfigSharp will execute the Load() method of your config file. 
 
 ### 3. Typical Use Case
 
