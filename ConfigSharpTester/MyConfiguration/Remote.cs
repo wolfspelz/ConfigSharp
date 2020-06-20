@@ -1,4 +1,4 @@
-//reference "System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+//reference "C:\Program Files\dotnet\shared\Microsoft.NETCore.App\3.1.5\netstandard.dll"
 
 using System;
 

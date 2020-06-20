@@ -1,4 +1,4 @@
-﻿namespace ConfigSharp
+namespace ConfigSharp
 {
     public interface ILoader
     {

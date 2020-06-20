@@ -4,15 +4,12 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using Roslyn.Compilers;
-using Roslyn.Compilers.CSharp;
-
-// Install-Package Roslyn.Compilers.CSharp -Version 1.2.20906.2
+using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace ConfigSharp
 {
-    using System.Linq;
-
     public class Container
     {
         public int Get(string key, int defaultValue) { return this.GetMemberValue(key, defaultValue); }
@@ -40,7 +37,7 @@ namespace ConfigSharp
         public Container Include(string fileName)
         {
             string code = Loader == null ? Load(fileName) : Loader.Load(fileName);
-            if (string.IsNullOrEmpty(code)) { throw new Exception("No code: " + fileName); }
+            if (string.IsNullOrEmpty(code)) { throw new Exception($"No code: {fileName} cwd={Directory.GetCurrentDirectory()}"); }
 
             var references = GetReferences(code);
 
@@ -81,6 +78,7 @@ namespace ConfigSharp
                     } else {
                         BaseFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathPart);
                     }
+                    BaseFolder = Path.GetFullPath(BaseFolder);
                     Log.Info("Base folder: " + BaseFolder);
                 }
 
@@ -118,17 +116,14 @@ namespace ConfigSharp
 
         public void Execute(string code, IEnumerable<string> references)
         {
-            var syntaxTree = SyntaxTree.ParseText(code);
-
-            var compilation = Compilation.Create("ConfigSnippet", new CompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-                .AddSyntaxTrees(syntaxTree)
-                ;
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var refList = references.ToList();
-            refList.Insert(0, typeof(Uri).Assembly.Location); // System.dll
-            refList.Insert(0, typeof(Container).Assembly.Location); // ConfigSharp.dll
-            refList.Insert(0, typeof(object).Assembly.Location); // mscorelib
-
+            refList.Insert(0, typeof(Object).Assembly.Location);
+            refList.Insert(0, typeof(Uri).Assembly.Location);
+            refList.Insert(0, typeof(Container).Assembly.Location);
+            refList.Insert(0, typeof(System.IO.FileAttributes).Assembly.Location);
+            
             // Adding the application dll is a bit iffy
             var baseType = GetType().BaseType;
             var typeAssembly = GetType().Assembly;
@@ -139,11 +134,11 @@ namespace ConfigSharp
             }
             refList.Insert(0, appLocation);
 
-            foreach (var sRef in refList) {
-                //if (!string.IsNullOrEmpty(sRef)) {
-                compilation = compilation.AddReferences(new MetadataFileReference(sRef));
-                //}
-            }
+            var compilation = CSharpCompilation.Create(
+                "ConfigSnippet",
+                new List<SyntaxTree> { syntaxTree },
+                refList.Select(r => MetadataReference.CreateFromFile(r)),
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
             using (var assemblyStream = new MemoryStream()) {
                 var compilationResult = compilation.Emit(assemblyStream);
@@ -157,9 +152,11 @@ namespace ConfigSharp
                             if (loadMethod != null) {
                                 // If there is a Load() method then load it
                                 var cfgObject = (dynamic)Activator.CreateInstance(type);
+
                                 CopyValues(this, cfgObject);
                                 type.InvokeMember(loadMethod.Name, BindingFlags.InvokeMethod, null, cfgObject, new object[] { });
                                 CopyValues(cfgObject, this);
+
                             } else {
 #pragma warning disable 0618
                                 if (LoadAllStaticMembers) {
@@ -184,7 +181,7 @@ namespace ConfigSharp
             }
         }
 
-        private static void CopyValues(object fromObj, object toObj)
+        void CopyValues(object fromObj, object toObj)
         {
             var fromType = fromObj.GetType();
             var toType = toObj.GetType();

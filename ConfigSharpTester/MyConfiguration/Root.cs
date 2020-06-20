@@ -1,5 +1,4 @@
-//reference "C:\Windows\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll"
-//reference "System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+//reference "C:\Program Files\dotnet\shared\Microsoft.NETCore.App\3.1.5\netstandard.dll"
 
 using System;
 
@@ -9,7 +8,7 @@ namespace ConfigSharpTester.Configuration
     {
         public void Load()
         {
-            Include("https://raw.githubusercontent.com/wolfspelz/ConfigSharp/master/ConfigSharpTester/Configuration/Remote.cs");
+            Include("https://raw.githubusercontent.com/wolfspelz/ConfigSharp/develop/ConfigSharpTester/MyConfiguration/Remote.cs");
             var ub = new UriBuilder("http", "blog.wolfspelz.de");
             UriBuilderResult = ub.ToString();
 
@@ -17,8 +16,8 @@ namespace ConfigSharpTester.Configuration
             IntPropertyFromRootCs = 42;
             StringMemberFromRootCs = "Local value from Root.cs";
             DateTimeProperty = DateTime.Now;
-            
-            if (SetupName == "Debug") { 
+
+            if (SetupName == "Debug") {
                 Include("Debug.cs");
             } else if (SetupName == "Production") {
                 Include("Production.cs");
