@@ -53,7 +53,7 @@ namespace ConfigSharp
             string code;
 
             if (fileName.StartsWith("http://") || fileName.StartsWith("https://")) {
-                code = LoadHttp(fileName);
+                code = LoadUri(fileName);
             } else {
                 code = LoadFile(fileName);
             }
@@ -84,7 +84,7 @@ namespace ConfigSharp
 
                 var filePath = Path.Combine(BaseFolder, filePart);
 
-                Log.Info("Read file: " + filePath);
+                Log.Info(filePath);
                 code = File.ReadAllText(filePath);
             } catch (Exception ex) {
                 Log.Error(ex.Message + "(" + fileName + ")");
@@ -93,12 +93,12 @@ namespace ConfigSharp
             return code;
         }
 
-        public static string LoadHttp(string url)
+        public static string LoadUri(string url)
         {
             string code = "";
 
             try {
-                Log.Info("HTTP request: " + url);
+                Log.Info(url);
                 var req = (HttpWebRequest)WebRequest.Create(url);
                 var resp = (HttpWebResponse)req.GetResponse();
                 var stream = resp.GetResponseStream();
