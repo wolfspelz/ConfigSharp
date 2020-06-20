@@ -114,16 +114,18 @@ namespace ConfigSharp
             return code;
         }
 
-        public void Execute(string code, IEnumerable<string> references)
+        public void Execute(string code, IEnumerable<string> customReferences)
         {
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var references = customReferences.ToList();
+            references.Add(typeof(Object).Assembly.Location);
+            references.Add(typeof(Uri).Assembly.Location);
+            references.Add(typeof(Container).Assembly.Location);
 
-            var refList = references.ToList();
-            refList.Insert(0, typeof(Object).Assembly.Location);
-            refList.Insert(0, typeof(Uri).Assembly.Location);
-            refList.Insert(0, typeof(Container).Assembly.Location);
-            refList.Insert(0, typeof(System.IO.FileAttributes).Assembly.Location);
-            
+            var aTypicalCoreAssembly = typeof(Enumerable).GetTypeInfo().Assembly.Location;
+            var coreFolder = Directory.GetParent(aTypicalCoreAssembly);
+            references.Add(coreFolder.FullName + Path.DirectorySeparatorChar + "netstandard.dll");
+            references.Add(coreFolder.FullName + Path.DirectorySeparatorChar + "System.Runtime.dll");
+
             // Adding the application dll is a bit iffy
             var baseType = GetType().BaseType;
             var typeAssembly = GetType().Assembly;
@@ -132,12 +134,14 @@ namespace ConfigSharp
                 var baseTypeAssembly = baseType.Assembly;
                 appLocation = baseTypeAssembly.Location;
             }
-            refList.Insert(0, appLocation);
+            references.Insert(0, appLocation);
+
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var compilation = CSharpCompilation.Create(
                 "ConfigSnippet",
-                new List<SyntaxTree> { syntaxTree },
-                refList.Select(r => MetadataReference.CreateFromFile(r)),
+                new[] { syntaxTree },
+                references.Select(r => MetadataReference.CreateFromFile(r)),
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
             using (var assemblyStream = new MemoryStream()) {

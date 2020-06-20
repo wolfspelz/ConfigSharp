@@ -1,5 +1,3 @@
-//reference "C:\Program Files\dotnet\shared\Microsoft.NETCore.App\3.1.5\netstandard.dll"
-
 using System;
 
 namespace ConfigSharpTester.Configuration

@@ -36,7 +36,7 @@ namespace ConfigSharpTester
             AssertAndPrint("IntFromProductionCs", "44", Config.IntFromProductionCs.ToString(CultureInfo.InvariantCulture));
             AssertAndPrint("DateTimeProperty", DateTime.Now.ToString(CultureInfo.InvariantCulture), Config.DateTimeProperty.ToString(CultureInfo.InvariantCulture));
             AssertAndPrint("UriBuilderResult", "http://blog.wolfspelz.de/", Config.UriBuilderResult);
-            AssertAndPrint("PropertyFromHttpInclude", "Remote value from /wolfspelz/ConfigSharp/master/ConfigSharpTester/Configuration/Remote.cs", Config.PropertyFromHttpInclude);
+            AssertAndPrint("PropertyFromHttpInclude", "Remote value from /wolfspelz/ConfigSharp/develop/ConfigSharpTester/MyConfiguration/Remote.cs", Config.PropertyFromHttpInclude);
             AssertAndPrint("Get(StringMemberFromRootCs)", "Local value from Root.cs", Config.Get("StringMemberFromRootCs", "-default-"));
             AssertAndPrint("Get(IntPropertyFromRootCs)", 42.ToString(CultureInfo.InvariantCulture), Config.Get("IntPropertyFromRootCs", 41).ToString(CultureInfo.InvariantCulture));
             AssertAndPrint("Get(DateTimeProperty.Date.Year)", DateTime.Now.Year.ToString(CultureInfo.InvariantCulture), Config.Get("DateTimeProperty.Date.Year", -1).ToString(CultureInfo.InvariantCulture));
