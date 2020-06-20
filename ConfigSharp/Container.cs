@@ -117,16 +117,19 @@ namespace ConfigSharp
         public void Execute(string code, IEnumerable<string> customReferences)
         {
             var references = customReferences.ToList();
-            references.Add(typeof(Object).Assembly.Location);
-            references.Add(typeof(Uri).Assembly.Location);
-            references.Add(typeof(Container).Assembly.Location);
 
+            // Netstandard & runtime
             var aTypicalCoreAssembly = typeof(Enumerable).GetTypeInfo().Assembly.Location;
             var coreFolder = Directory.GetParent(aTypicalCoreAssembly);
             references.Add(coreFolder.FullName + Path.DirectorySeparatorChar + "netstandard.dll");
             references.Add(coreFolder.FullName + Path.DirectorySeparatorChar + "System.Runtime.dll");
 
-            // Adding the application dll is a bit iffy
+            // Basics & config lib
+            references.Add(typeof(Object).Assembly.Location);
+            references.Add(typeof(Uri).Assembly.Location);
+            references.Add(typeof(Container).Assembly.Location);
+
+            // Application dll
             var baseType = GetType().BaseType;
             var typeAssembly = GetType().Assembly;
             var appLocation = typeAssembly.Location;
@@ -134,7 +137,7 @@ namespace ConfigSharp
                 var baseTypeAssembly = baseType.Assembly;
                 appLocation = baseTypeAssembly.Location;
             }
-            references.Insert(0, appLocation);
+            references.Add(appLocation);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
