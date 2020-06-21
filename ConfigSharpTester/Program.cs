@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+
+using ConfigSharpTester.Configuration;
 
 namespace ConfigSharpTester
 {
@@ -13,6 +16,8 @@ namespace ConfigSharpTester
         public DateTime DateTimeProperty { get; set; }
         public string PropertyFromHttpInclude { get; set; }
         public string UriBuilderResult { get; set; }
+        public string FromCustomFunction { get; set; } = "unchanged";
+        public string FromDontLoadThisCustomFunction { get; set; } = "unchanged";
     }
 
     class Program
@@ -26,6 +31,9 @@ namespace ConfigSharpTester
         {
             ConfigSharp.Log.LogHandler = (level, context, message) => Console.WriteLine($"ConfigSharp {level} {context} {message}");
             var Config = new MyConfig();
+            Config.Functions.Add(ConfigSharp.Container.AnyPublicMember);
+            Config.Functions.Add(ConfigSharp.Container.Not + nameof(Finally.DontLoadThisCustomFunction));
+
             Config.Include("../../../MyConfiguration/Root.cs");
 
             Console.WriteLine("");
@@ -43,6 +51,8 @@ namespace ConfigSharpTester
             AssertAndPrint("Get<DateTime>(DateTimeProperty).Date.Year", DateTime.Now.Year.ToString(CultureInfo.InvariantCulture), Config.Get<DateTime>("DateTimeProperty").Date.Year.ToString(CultureInfo.InvariantCulture));
             AssertAndPrint("Get(NotExistingProperty)", "-default-", Config.Get("NotExistingProperty", "-default-"));
             AssertAndPrint("Get(IntPropertyFromRootCs)", "42", Config.Get("IntPropertyFromRootCs", 41).ToString(CultureInfo.InvariantCulture));
+            AssertAndPrint("Get(FromCustomFunction)", "FromCustomFunction", Config.Get(nameof(MyConfig.FromCustomFunction), ""));
+            AssertAndPrint("Get(FromDontLoadThisCustomFunction)", "unchanged", Config.Get(nameof(MyConfig.FromDontLoadThisCustomFunction), ""));
 
             Console.WriteLine("");
             Console.WriteLine("<ENTER> to continue");

@@ -21,6 +21,7 @@ namespace ConfigSharpTester.Configuration
                 Include("Production.cs");
             }
 
+            Include("Finally.cs");
         }
     }
 }

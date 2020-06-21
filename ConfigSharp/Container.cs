@@ -24,7 +24,9 @@ namespace ConfigSharp
 
         public string BaseFolder { get; set; }
         public string CurrentFile { get; protected set; }
-        public List<string> Functions = new List<string> { "Load" };
+        public const string AnyPublicMember = "_public";
+        public const string Not = "!";
+        public List<string> Functions = new List<string> { "Load" }; // "_public"
 
         [Obsolete("Loading all members of all classes is still supported, but must be activated. The feature will be removed later.")]
         public bool LoadAllStaticMembers = false;
@@ -155,26 +157,26 @@ namespace ConfigSharp
                     var assemblyTypes = loadedAssembly.GetTypes();
                     foreach (var type in assemblyTypes) {
                         try {
-                            var loadMethod = type.GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance).FirstOrDefault(m => Functions.Contains(m.Name));
-                            if (loadMethod != null) {
-                                // If there is a Load() method then load it
-                                var cfgObject = (dynamic)Activator.CreateInstance(type);
 
+                            var loadMethods = type
+                                .GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance)
+                                .Where(m => {
+                                    if (m is ConstructorInfo) { return false; }
+                                    if (Functions.Contains(Not + m.Name)) { return false; }
+                                    if (Functions.Contains(m.Name)) { return true; }
+                                    if (Functions.Contains(AnyPublicMember)) { return true; }
+                                    return false;
+                                });
+
+                            if (loadMethods == null || loadMethods.Count() == 0) { throw new Exception("No Load method"); }
+
+                            foreach (var loadMethod in loadMethods) {
+                                var cfgObject = Activator.CreateInstance(type);
                                 CopyValues(this, cfgObject);
                                 type.InvokeMember(loadMethod.Name, BindingFlags.InvokeMethod, null, cfgObject, new object[] { });
                                 CopyValues(cfgObject, this);
-
-                            } else {
-#pragma warning disable 0618
-                                if (LoadAllStaticMembers) {
-#pragma warning restore 0618
-                                    // Otherwise load all static members (backward compatibility)
-                                    var members = type.GetMembers(BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static);
-                                    foreach (var member in members) {
-                                        type.InvokeMember(member.Name, BindingFlags.Default | BindingFlags.InvokeMethod, null, null, new object[] { this });
-                                    }
-                                }
                             }
+
                         } catch (Exception ex) {
                             Log.Error(CurrentFile + " Exception: " + ex.Message);
                         }
