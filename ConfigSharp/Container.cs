@@ -116,8 +116,9 @@ namespace ConfigSharp
             return code;
         }
 
-        public void Execute(string code, IEnumerable<string> customReferences)
+        public void Execute(string code, IEnumerable<string> customReferences = null)
         {
+            customReferences = customReferences ?? new List<string>();
             var references = customReferences.ToList();
 
             // Netstandard & runtime

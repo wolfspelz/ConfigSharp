@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigSharp", "ConfigSharp\ConfigSharp.csproj", "{3BC86950-3296-4D9D-BFC2-7B8B4B965E42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigSharp", "ConfigSharp\ConfigSharp.csproj", "{3BC86950-3296-4D9D-BFC2-7B8B4B965E42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigSharpTester", "ConfigSharpTester\ConfigSharpTester.csproj", "{7DE3956F-4604-425E-8776-AAE6A6970C8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigSharpTester", "ConfigSharpTester\ConfigSharpTester.csproj", "{7DE3956F-4604-425E-8776-AAE6A6970C8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigSharp.Test", "ConfigSharp.Test\ConfigSharp.Test.csproj", "{DD99802A-F047-411E-90A5-FDAEF75BC00E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{7DE3956F-4604-425E-8776-AAE6A6970C8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DE3956F-4604-425E-8776-AAE6A6970C8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DE3956F-4604-425E-8776-AAE6A6970C8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD99802A-F047-411E-90A5-FDAEF75BC00E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD99802A-F047-411E-90A5-FDAEF75BC00E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD99802A-F047-411E-90A5-FDAEF75BC00E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD99802A-F047-411E-90A5-FDAEF75BC00E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
